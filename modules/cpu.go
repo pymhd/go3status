@@ -1,17 +1,20 @@
 package modules
 
 import (
-	"os/exec"
+	_ "os/exec"
 	"time"
 )
 
+
 type CPU struct {
-	name string
+	name  string
+	mute  *int32
 }
 
 func (cpu CPU) Name() string {
 	return cpu.name
 }
+
 
 func (cpu CPU) Run(c chan ModuleOutput, cfg ModuleConfig) {
 	//w := ChanWriter{Chan: c}
@@ -28,6 +31,9 @@ func (cpu CPU) run(c chan ModuleOutput, cfg ModuleConfig) {
 	output := ModuleOutput{}
 
 	output.FullText = "27% to run periodically ChanWriter{Chan:"
+	if *cpu.mute > 0 {
+		output.FullText = "33%"
+	}
 	output.ShortText = "27%"
 	output.Color = cfg.Colors["good"]
 	output.Name = cpu.name
@@ -38,14 +44,21 @@ func (cpu CPU) run(c chan ModuleOutput, cfg ModuleConfig) {
 }
 
 func (cpu CPU) HandleClickEvent(ce *ClickEvent) {
-	cmd := exec.Command("urxvt", "-name", "__scratchpad", "-e", "htop")	
-	err := cmd.Start()
-	if err != nil {
-		panic(err)
-	}
+	cpu.Mute()
+	//cmd := exec.Command("urxvt", "-name", "__scratchpad", "-e", "htop")	
+	//err := cmd.Start()
+	//if err != nil {
+	//	panic(err)
+	//}
 }
 
+func (cpu CPU) Mute() {
+	*cpu.mute = int32(1)
+}
+
+
 func init() {
-	cpu := CPU{"cpu"}
+        var m int32 
+	cpu := CPU{"cpu", &m}
 	Register("cpu", cpu)
 }
