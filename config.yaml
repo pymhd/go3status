@@ -14,6 +14,8 @@ modules:
       good: 0-50
       warn: 51-75
       crit: 75-100
+    extra:
+      key: value  
   ram:
     interval: 5s
     prefix: "\uf1b2"
