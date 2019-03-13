@@ -1,6 +1,7 @@
 package modules
 
 import (
+	"os/exec"
 	"time"
 )
 
@@ -37,7 +38,11 @@ func (cpu CPU) run(c chan ModuleOutput, cfg ModuleConfig) {
 }
 
 func (cpu CPU) HandleClickEvent(ce *ClickEvent) {
-	
+	cmd := exec.Command("urxvt", "-name", "__scratchpad", "-e", "htop")	
+	err := cmd.Start()
+	if err != nil {
+		panic(err)
+	}
 }
 
 func init() {

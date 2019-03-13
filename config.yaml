@@ -14,6 +14,11 @@ modules:
       good: 0-50
       warn: 51-75
       crit: 75-100
+    clickEvents:
+      left: urxvt -name __scratchpad -e htop 
+      right: urxvt -name __scratchpad -e htop
+      wheelUp: urxvt -name __scratchpad -e htop
+      wheelDown: urxvt -name __scratchpad -e htop
     extra:
       key: value  
   ram:
