@@ -12,7 +12,7 @@ const (
 )
 
 type CPU struct {
-	Name	string
+	name	string
 }
 
 func (cpu CPU) Run(c chan []byte, cfg ModuleConfig) {
@@ -22,6 +22,9 @@ func (cpu CPU) Run(c chan []byte, cfg ModuleConfig) {
 	}
 }
 
+func (cpu CPU) Name() string {
+	return cpu.name
+}
 
 func init() {
 	cpu := CPU{"cpu"}

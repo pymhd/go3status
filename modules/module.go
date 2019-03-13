@@ -6,6 +6,7 @@ import (
 
 
 type Module interface {
+	Name() string
 	Run(c chan []byte, cfg ModuleConfig)
 }
 
@@ -14,6 +15,6 @@ type ModuleConfig struct {
 	Interval time.Duration  `yaml:"interval"`
 	Prefix   string         `yaml:"prefix"`
 	Postfix  string         `yaml:"postfix"`
-	Colors   map[int]string `yaml:"colors"`
+	Colors   map[string]string `yaml:"colors"`
 	Extra	 map[string]interface{} `yaml:"extra"`	
 }
