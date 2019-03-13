@@ -1,6 +1,7 @@
 package modules
 
 import (
+	_ "fmt"
 	_ "os/exec"
 	"time"
 )
@@ -8,36 +9,43 @@ import (
 
 type CPU struct {
 	name  string
-	mute  *int32
+	refresh chan bool
 }
 
 func (cpu CPU) Name() string {
 	return cpu.name
 }
 
-
 func (cpu CPU) Run(c chan ModuleOutput, cfg ModuleConfig) {
 	//w := ChanWriter{Chan: c}
-	cpu.run(c, cfg)
+	cpu.run(c, cfg, false)
 
 	// to run periodically
 	ticker := time.NewTicker(cfg.Interval)
-	for range ticker.C {
-		cpu.run(c, cfg)
+	for { 
+		select {
+		case <- ticker.C:
+			//fmt.Println("ticker")
+			cpu.run(c, cfg, false)
+		case <- cpu.refresh:
+			//fmt.Println("by refresh")
+			cpu.run(c, cfg, true)
+		}
 	}
 }
 
-func (cpu CPU) run(c chan ModuleOutput, cfg ModuleConfig) {
+func (cpu CPU) run(c chan ModuleOutput, cfg ModuleConfig, urgent bool) {
 	output := ModuleOutput{}
 
 	output.FullText = "27% to run periodically ChanWriter{Chan:"
-	if *cpu.mute > 0 {
+	if Mute[cpu.name] {
 		output.FullText = "33%"
 	}
 	output.ShortText = "27%"
 	output.Color = cfg.Colors["good"]
 	output.Name = cpu.name
-	//output.Markup = "pango"
+	output.Urgent = urgent
+	output.Markup = "pango"
 	//output.Background = "#ffffff"
 
 	c <- output
@@ -45,20 +53,16 @@ func (cpu CPU) run(c chan ModuleOutput, cfg ModuleConfig) {
 
 func (cpu CPU) HandleClickEvent(ce *ClickEvent) {
 	cpu.Mute()
-	//cmd := exec.Command("urxvt", "-name", "__scratchpad", "-e", "htop")	
-	//err := cmd.Start()
-	//if err != nil {
-	//	panic(err)
-	//}
+	cpu.refresh <- true
 }
 
 func (cpu CPU) Mute() {
-	*cpu.mute = int32(1)
+	Mute[cpu.name] = !Mute[cpu.name]
 }
 
 
 func init() {
-        var m int32 
-	cpu := CPU{"cpu", &m}
+        rch := make(chan bool)
+	cpu := CPU{"cpu", rch}
 	Register("cpu", cpu)
 }

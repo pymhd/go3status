@@ -1,8 +1,8 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
+	"encoding/json"
 	"go3status/modules"
 	"os"
 	"reflect"
@@ -44,7 +44,9 @@ func (sl *StatusLine) Run() {
 		// refresh panel if urgent, value alredy injected
 		// use with caution, it is not rate-limited
 		if mo.Urgent {
+			//fmt.Println("Trying to refresh")
 			sl.Refresh <- true
+			//fmt.Println("PUSHED REFRESH")
 		}
 	}
 }
@@ -58,10 +60,12 @@ func (sl *StatusLine) Render() {
 	for {
 		select {
 		// regular output
-		case <-time.After(cfg.Global.Interval):
+		case <- time.After(cfg.Global.Interval):
+			//fmt.Println("refresh by regulat time after")
 			sl.render(enc)
 		//need to refresh now
-		case <-sl.Refresh:
+		case <- sl.Refresh:
+			//fmt.Println("refresh by CHANEL")
 			sl.render(enc)
 		}
 	}
@@ -83,5 +87,6 @@ func NewStatusLine() *StatusLine {
 	}
 	sl.Blocks = make([]modules.ModuleOutput, 1)
 	sl.cases = make([]reflect.SelectCase, 1)
+	sl.Refresh = make(chan bool, 0)
 	return sl
 }

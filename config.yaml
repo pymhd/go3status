@@ -1,9 +1,9 @@
 global:
-  interval: 1s
+  interval: 5s
   color: regular
 modules:
   cpu:
-    interval: 2s
+    interval: 5s
     prefix: "\uf1b2"
     postfix: 
     colors:
