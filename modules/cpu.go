@@ -38,9 +38,9 @@ func (cpu CPU) run (c chan []byte, cfg ModuleConfig) {
 	// ...
 	output.FullText = "27%"
 	output.Color = cfg.Colors["good"]
-        data, _  := json.Marshal(output)
-        
-        c <- []byte(data)
+        //data, _  := json.Marshal(output)
+        json.NewEncoder(CW{c}).Encode(output)
+        //c <- []byte(data)
 }
 
 func init() {
@@ -55,8 +55,7 @@ type CW struct {
 
 
 func (c CW) Write(b []byte) (n int, err error) {
-	c.ch		
+	c.ch <- b 
+	return 1, nil		
 }
-
-
 
