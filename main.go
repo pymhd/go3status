@@ -15,3 +15,4 @@ func main() {
 	go s.Run()
 	s.Render()
 }
+

@@ -7,7 +7,7 @@ modules:
     prefix: "\uf1b2"
     postfix: 
     colors:
-      good: "#333333"
+      good: "#555555"
       warn: ""
       crit: ""
     levels:
