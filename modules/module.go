@@ -7,7 +7,7 @@ import (
 
 type Module interface {
 	Name() string
-	Run(c chan []byte, cfg ModuleConfig)
+	Run(c chan ModuleOutput, cfg ModuleConfig)
 }
 
 

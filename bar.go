@@ -31,7 +31,7 @@ type StatusLine struct {
 
 func (sl *StatusLine) Start() {
 	for n, module := range sl.Modules {
-		c := make(chan []byte)
+		c := make(chan modules.ModuleOutput)
 		sl.cases[n] = reflect.SelectCase{Dir: reflect.SelectRecv, Chan: reflect.ValueOf(c)}
 		go module.Run(c, cfg.Modules[module.Name()])
 	}
@@ -41,16 +41,11 @@ func (sl *StatusLine) Run() {
 	for {
 		ch_num, value, _ := reflect.Select(sl.cases)
 		
-		mo := new(modules.ModuleOutput)
-		msg  := value.Bytes()
-		
-		if err := json.Unmarshal(msg, mo); err != nil {
-			fmt.Println(err)
-		}
+		msg  := value.Interface().(modules.ModuleOutput)
 
 		//Lock to update Statsuses field
 		sl.Lock()
-		sl.Blocks[ch_num] = *mo
+		sl.Blocks[ch_num] = msg
 		sl.Unlock()
 	}
 }
