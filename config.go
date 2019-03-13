@@ -2,6 +2,7 @@ package main
 
 
 import (
+        "time"
         "io/ioutil"
         "gopkg.in/yaml.v2"
         "go3status/modules"
@@ -9,7 +10,7 @@ import (
 
 type Config struct {
         Global	struct {
-            Interval	string `yaml:"interval"`
+            Interval	time.Duration `yaml:"interval"`
             Color	string	`yaml:"color"`
         } `yaml:"global"`
         Modules        map[string]modules.ModuleConfig `yaml:"modules"` 

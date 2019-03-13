@@ -47,6 +47,7 @@ func (sl *StatusLine) Run() {
 		if err := json.Unmarshal(msg, mo); err != nil {
 			fmt.Println(err)
 		}
+
 		//Lock to update Statsuses field
 		sl.Lock()
 		sl.Blocks[ch_num] = *mo
@@ -55,15 +56,28 @@ func (sl *StatusLine) Run() {
 }
 
 func (sl *StatusLine) Render() {
+	// ...
 	fmt.Println(sl.Header)
 	fmt.Printf("[[]\n,")
-	for {
-		sl.Lock()
-		json.NewEncoder(os.Stdout).Encode(sl.Blocks)
-		sl.Unlock()
-		time.Sleep(1 * time.Second)
-		fmt.Printf(",")
+	
+	ticker := time.NewTicker(cfg.Global.Interval)
+	enc := json.NewEncoder(os.Stdout)
+	for { 
+		select { 
+		case <- ticker.C:
+			sl.render(enc)
+		case <- sl.Refresh:
+			sl.render(enc)
+		}
 	}
+}
+
+func (sl *StatusLine) render(e *json.Encoder) {
+	sl.Lock()
+	defer sl.Unlock()
+	
+	e.Encode(sl.Blocks)
+	fmt.Printf(",")
 }
 
 
