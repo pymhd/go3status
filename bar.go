@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"fmt"
 	"time"
 	"sync"
@@ -8,18 +9,6 @@ import (
 	"encoding/json"
 	"go3status/modules"
 )
-
-type ModuleOutput struct {
-	Align     string `json:"align,omitempty"`
-	Color     string `json:"color,omitempty"`
-	FullText  string `json:"full_text"`
-	Instance  string `json:"instance,omitempty"`
-	MinWidth  string `json:"min_width,omitempty"`
-	Name      string `json:"name,omitempty"`
-	ShortText string `json:"short_text,omitempty"`
-	Separator bool   `json:"separator"`
-	Urgent    bool   `json:"urgent"`
-}
 
 type ClickEvent struct {
 	Name     string `json:"name"`
@@ -35,7 +24,7 @@ type StatusLine struct {
 	Header  string
 	Refresh	chan bool
 	Modules []modules.Module
-	Blocks  []ModuleOutput
+	Blocks  []modules.ModuleOutput
 	cases   []reflect.SelectCase
 }
 
@@ -52,7 +41,7 @@ func (sl *StatusLine) Run() {
 	for {
 		ch_num, value, _ := reflect.Select(sl.cases)
 		
-		mo := new(ModuleOutput)
+		mo := new(modules.ModuleOutput)
 		msg  := value.Bytes()
 		
 		if err := json.Unmarshal(msg, mo); err != nil {
@@ -66,11 +55,14 @@ func (sl *StatusLine) Run() {
 }
 
 func (sl *StatusLine) Render() {
+	fmt.Println(sl.Header)
+	fmt.Printf("[[]\n,")
 	for {
 		sl.Lock()
-		fmt.Printf("%+v\n", sl.Blocks)
+		json.NewEncoder(os.Stdout).Encode(sl.Blocks)
 		sl.Unlock()
 		time.Sleep(1 * time.Second)
+		fmt.Printf(",")
 	}
 }
 
@@ -81,7 +73,7 @@ func NewStatusLine() *StatusLine {
 	for _, mod := range modules.Modules {
 		sl.Modules = append(sl.Modules, mod)
 	}
-	sl.Blocks = make([]ModuleOutput, 1)
+	sl.Blocks = make([]modules.ModuleOutput, 1)
 	sl.cases = make([]reflect.SelectCase, 1)
 	return sl
 }

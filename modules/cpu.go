@@ -2,6 +2,7 @@ package modules
 
 import (
 	"time"
+	"encoding/json"
 )
 
 const (
@@ -17,7 +18,12 @@ type CPU struct {
 
 func (cpu CPU) Run(c chan []byte, cfg ModuleConfig) {
 	for {
-		c <- []byte(`{"full_text": "80%", "separator": true}`)
+		output := ModuleOutput{FullText: "80%", Name: "cpu"}
+		data, err  := json.Marshal(output)
+		if err != nil {
+			panic(err)
+		}
+		c <- []byte(data)
 		time.Sleep(1 * time.Second)
 	}
 }

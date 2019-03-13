@@ -8,7 +8,8 @@ var (
 )
 
 func main() {
-	cfg = ParseConfig("./config.yaml")
+	
+	cfg = ParseConfig("/home/mhd/go/src/go3status/config.yaml")
 	s := NewStatusLine()
 	s.Start()
 	go s.Run()
