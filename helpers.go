@@ -1,11 +1,9 @@
-package main 
+package main
 
-import (
-
-)
+import ()
 
 func must(err error) {
-    if err != nil {
-            panic(err)
-    }
+	if err != nil {
+		panic(err)
+	}
 }

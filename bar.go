@@ -1,33 +1,24 @@
 package main
 
 import (
-	"os"
-	"fmt"
-	"time"
-	"sync"
-	"reflect"
 	"encoding/json"
+	"fmt"
 	"go3status/modules"
+	"os"
+	"reflect"
+	"sync"
+	"time"
 )
-
-type ClickEvent struct {
-	Name     string `json:"name"`
-	Instance string `json:"instance"`
-	Button   int    `json:"button"`
-	XCoord   int    `json:"x"`
-	YCoord   int    `json:"y"`
-}
 
 
 type StatusLine struct {
 	sync.Mutex
 	Header  string
-	Refresh	chan bool
+	Refresh chan bool
 	Modules []modules.Module
 	Blocks  []modules.ModuleOutput
 	cases   []reflect.SelectCase
 }
-
 
 func (sl *StatusLine) Start() {
 	for n, module := range sl.Modules {
@@ -40,13 +31,21 @@ func (sl *StatusLine) Start() {
 func (sl *StatusLine) Run() {
 	for {
 		ch_num, value, _ := reflect.Select(sl.cases)
-		
-		msg  := value.Interface().(modules.ModuleOutput)
 
+		mo, ok := value.Interface().(modules.ModuleOutput)
+		if !ok {
+			// why
+			fmt.Println()
+		}
 		//Lock to update Statsuses field
 		sl.Lock()
-		sl.Blocks[ch_num] = msg
+		sl.Blocks[ch_num] = mo
 		sl.Unlock()
+		// refresh panel if urgent, value alredy injected
+		// use with caution, it is not rate-limited
+		if mo.Urgent {
+			sl.Refresh <- true
+		}
 	}
 }
 
@@ -54,14 +53,15 @@ func (sl *StatusLine) Render() {
 	// ...
 	fmt.Println(sl.Header)
 	fmt.Printf("[[]\n,")
-	
-	ticker := time.NewTicker(cfg.Global.Interval)
+
 	enc := json.NewEncoder(os.Stdout)
-	for { 
-		select { 
-		case <- ticker.C:
+	for {
+		select {
+		// regular output
+		case <-time.After(cfg.Global.Interval):
 			sl.render(enc)
-		case <- sl.Refresh:
+		//need to refresh now
+		case <-sl.Refresh:
 			sl.render(enc)
 		}
 	}
@@ -70,11 +70,10 @@ func (sl *StatusLine) Render() {
 func (sl *StatusLine) render(e *json.Encoder) {
 	sl.Lock()
 	defer sl.Unlock()
-	
+
 	e.Encode(sl.Blocks)
 	fmt.Printf(",")
 }
-
 
 func NewStatusLine() *StatusLine {
 	sl := new(StatusLine)

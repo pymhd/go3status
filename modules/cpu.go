@@ -4,19 +4,18 @@ import (
 	"time"
 )
 
-
 type CPU struct {
-	name	string
+	name string
 }
 
 func (cpu CPU) Name() string {
-        return cpu.name
+	return cpu.name
 }
 
 func (cpu CPU) Run(c chan ModuleOutput, cfg ModuleConfig) {
 	//w := ChanWriter{Chan: c}
 	cpu.run(c, cfg)
-	
+
 	// to run periodically
 	ticker := time.NewTicker(cfg.Interval)
 	for range ticker.C {
@@ -24,12 +23,15 @@ func (cpu CPU) Run(c chan ModuleOutput, cfg ModuleConfig) {
 	}
 }
 
-func (cpu CPU) run (c chan ModuleOutput, cfg ModuleConfig ) {
+func (cpu CPU) run(c chan ModuleOutput, cfg ModuleConfig) {
 	output := ModuleOutput{}
-	
-	output.FullText = "27%"
+
+	output.FullText = "27% to run periodically ChanWriter{Chan:"
+	output.ShortText = "27%"
 	output.Color = cfg.Colors["good"]
-	
+	//output.Markup = "pango"
+	//output.Background = "#ffffff"
+
 	c <- output
 }
 
