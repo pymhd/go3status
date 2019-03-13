@@ -1,0 +1,64 @@
+type Status struct {
+    Fulltext	string
+    Color	string
+    ...
+}
+
+type MainPanel struct {
+    Modules	[]*Module
+    Text	[]*Status
+}
+
+func (mp *MainPanel) Run() {
+    //var wg sync.WaitGroup
+    for n, module := range mp.Modules {
+            //wg.Add(1)
+            ch := make(chan string)
+            go func() {
+                module.Start(Text[n], interval)
+                //wg.Donle()
+            }()
+            
+    }
+    //wg.Wait()
+    
+}
+
+func (mp *MainPanel) Render() {
+    
+}
+
+
+type Module interface {
+    Start()
+    Update()
+    Stop()
+    
+}
+
+
+type CPU struct {
+    mu  sync.Mutex()
+    prevValue interface{}
+
+}
+
+func (cpu *CPU) Start() {
+    getcpuval()
+    pushcpuval()
+}
+
+func (cpu *CPU) Stop() {
+
+}
+
+func (cpu *CPU) Update() {
+    if needToUpdate {
+        getcpuval()
+        pushcpuval()
+    } else {
+        pusholdval()
+    }
+    
+}
+

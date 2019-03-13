@@ -1,0 +1,36 @@
+global:
+  interval: 1s
+  color: regular
+modules:
+  cpu:
+    interval: 2s
+    prefix: "\uf1b2"
+    postfix: 
+    colors:
+      good: "#333333"
+      warn: ""
+      crit: ""
+    levels:
+      good: 0-50
+      warn: 51-75
+      crit: 75-100
+  ram:
+    interval: 5s
+    prefix: "\uf1b2"
+    postfix: 
+    colors:
+      good: "#333333"
+      warn: ""
+      crit: ""
+    levels:
+      good: 0-50
+      warn: 51-75
+      crit: 75-100
+  vpn:
+    interval: 5s
+    prefix:
+    postfix:
+    colors:
+      on: "#333333"
+      off: ""
+  
