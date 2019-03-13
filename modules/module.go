@@ -6,7 +6,8 @@ import (
 
 type Module interface {
 	Name() string
-	Run(c chan ModuleOutput, cfg ModuleConfig)
+	Run(chan ModuleOutput, ModuleConfig)
+	HandleClickEvent(*ClickEvent)
 }
 
 type ModuleConfig struct {
@@ -32,3 +33,14 @@ type ModuleOutput struct {
 	//pango
 	Markup string `json:"markup"`
 }
+
+
+type ClickEvent struct {
+        Name     string   `json:"name"`
+        Instance string   `json:"instance"`
+        Button   int      `json:"button"`
+        X        int      `json:"x"`
+        Y        int      `json:"y"`
+        Mod      []string `json:"modifiers"`
+}
+

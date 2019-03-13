@@ -29,10 +29,15 @@ func (cpu CPU) run(c chan ModuleOutput, cfg ModuleConfig) {
 	output.FullText = "27% to run periodically ChanWriter{Chan:"
 	output.ShortText = "27%"
 	output.Color = cfg.Colors["good"]
+	output.Name = cpu.name
 	//output.Markup = "pango"
 	//output.Background = "#ffffff"
 
 	c <- output
+}
+
+func (cpu CPU) HandleClickEvent(ce *ClickEvent) {
+	
 }
 
 func init() {

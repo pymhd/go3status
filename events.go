@@ -5,33 +5,23 @@ import (
 	_ "fmt"
 	"bufio"
 	"encoding/json"
+	"go3status/modules"
 )
-
-type ClickEvent struct {
-	Name     string   `json:"name"`
-	Instance string   `json:"instance"`
-	Button   int      `json:"button"`
-	X        int      `json:"x"`
-	Y        int      `json:"y"`
-	Mod      []string `json:"modifiers"`
-}
-
 
 func RunClickEventsHandler() {
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		b := scanner.Bytes()
-		ce := new(ClickEvent)
+		ce := new(modules.ClickEvent)
 		
-		f, _  := os.OpenFile("/tmp/i3ce", os.O_APPEND|os.O_WRONLY, 0644)
-		enc := json.NewEncoder(f)
 		if json.Valid(b) {
 			json.Unmarshal(b, ce)
-			enc.Encode(b)
 		} else {
 			json.Unmarshal(b[1:], ce)
 		}
-		enc.Encode(ce)
-		f.Close()
+		//not strange stdin
+		if len(ce.Name) > 0 {
+			modules.Modules[ce.Name].HandleClickEvent(ce)
+		} 
 	}
 }
