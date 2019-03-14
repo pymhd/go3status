@@ -128,7 +128,7 @@ func inRange(p float64, r string) bool {
 	if err != nil {
                 return false
         }
-        if p >= min && p < max {
+        if p >= min && p <= max {
         	return true
         }
         return false

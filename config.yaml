@@ -7,9 +7,9 @@ modules:
     prefix: "\uf2db"
     postfix: 
     colors:
-      good: "#333333"
-      warn: "#555555"
-      crit: "#111111"
+      good: "#75c55c"
+      warn: "#e2c96e"
+      crit: "#7f0909"
     levels:
       good: 0-50
       warn: 51-75
