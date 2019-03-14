@@ -5,7 +5,7 @@ modules:
   cpu:
     interval: 2s500ms
     prefix: "\uf2db"
-    postfix: 
+    postfix: " :)"
     colors:
       good: "#75c55c"
       warn: "#e2c96e"
