@@ -26,24 +26,24 @@ func (cpu CPU) Name() string {
 
 func (cpu CPU) Run(c chan ModuleOutput, cfg ModuleConfig) {
 	//to run by start
-	cpu.run(c, cfg, false)
+	cpu.run(c, cfg)
 
 	// to run periodically
 	ticker := time.NewTicker(cfg.Interval)
 	for {
 		select {
 		case <-ticker.C:
-			cpu.run(c, cfg, false)
+			cpu.run(c, cfg)
 		case <-cpu.refresh:
-			cpu.run(c, cfg, true)
+			cpu.run(c, cfg)
 		}
 	}
 }
 
-func (cpu CPU) run(c chan ModuleOutput, cfg ModuleConfig, refresh bool) {
+func (cpu CPU) run(c chan ModuleOutput, cfg ModuleConfig) {
 	output := ModuleOutput{}
 	output.Name = cpu.name
-	output.Refresh = refresh
+	output.Refresh = true
 	output.Markup = "pango"
 	output.FullText = cfg.Prefix
 	
