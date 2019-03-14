@@ -21,6 +21,7 @@ type ModuleConfig struct {
 	Prefix   string                 `yaml:"prefix"`
 	Postfix  string                 `yaml:"postfix"`
 	Colors   map[string]string      `yaml:"colors"`
+	Levels  map[string]string	`yaml:"levels"`
 	ClickEvents map[string]string   `yaml:"clickEvents"` 
 	Extra    map[string]interface{} `yaml:"extra"`
 }

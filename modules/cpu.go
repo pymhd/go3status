@@ -4,6 +4,7 @@ import (
 	"os"
 	"fmt"
 	"strings"
+	"strconv"
 	"os/exec"
 	"sync/atomic"
 	"time"
@@ -47,8 +48,13 @@ func (cpu CPU) run(c chan ModuleOutput, cfg ModuleConfig, refresh bool) {
 	output.Markup = "pango"
 	output.FullText = cfg.Prefix
 	
+	percentage := getCpuPercentage()
+	for lvl, val := range cfg.Levels {
+		if inRange(percentage, val) {
+			output.Color = cfg.Colors[lvl]
+		}
+	}
 	
-	output.FullText = getCpuPercentage()
 	if x := atomic.LoadInt32(Mute[cpu.name]); x == -1 {
 		output.FullText = "33%"
 	}
@@ -84,7 +90,7 @@ func execute(cmd string) {
 	c.Start()
 }
 
-func getCpuPercentage() string {
+func getCpuPercentage() float64 {
         var user, nice, system, idle, io, irq, softirq, steal, guest, guest_nice int
         
         stat, _ := os.Open("/proc/stat")
@@ -106,7 +112,28 @@ func getCpuPercentage() string {
 
         cpu := 100 * float64(totald - idled)/float64(totald)
         puser, pnice, psystem, pidle, pio, pirq, psoftirq, psteal, pguest, pguest_nice = user, nice, system, idle, io, irq, softirq, steal, guest, guest_nice
-        return fmt.Sprintf("%.2f%%", cpu) 
+        return cpu
+        //return fmt.Sprintf("%.2f%%", cpu) 
+}
+
+func inRange(p float64, r string) bool {
+	vals := strings.Split(r, "-")
+	if len(vals) != 0 {
+		return false
+	}
+	min, err := strconv.ParseFloat(vals[0], 64)
+	if err != nil {
+		return false
+	}
+	max, err := strconv.ParseFloat(vals[1], 64)
+	if err != nil {
+                return false
+        }
+        if p >= min && p < max {
+        	return true
+        }
+        return false
+
 }
 
 
@@ -115,3 +142,5 @@ func init() {
 	cpu := CPU{"cpu", rch}
 	Register("cpu", cpu)
 }
+
+
