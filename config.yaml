@@ -24,6 +24,10 @@ modules:
   title:
     interval: 1s
     prefix: "W: "
+  time:
+    interval: 1s
+    extra:
+      format: 02-01-2006 15:04:05
   ram:
     interval: 5s
     prefix: "\uf1b2"
