@@ -4,10 +4,10 @@ global:
 modules:
   cpu:
     interval: 2s500ms
-    prefix: "\u2699"
+    prefix: "\uf2db"
     postfix: 
     colors:
-      good: "#777777"
+      good: "#333333"
       warn: "#555555"
       crit: "#111111"
     levels:

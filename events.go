@@ -5,7 +5,7 @@ import (
 	_ "fmt"
 	"bufio"
 	"encoding/json"
-	"github.com/pymhd/go3status/modules"
+	"go3status/modules"
 )
 
 func RunClickEventsHandler() {

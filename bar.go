@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"encoding/json"
-	"github.com/pymhd/go3status/modules"
+	"go3status/modules"
 	"os"
 	"reflect"
 	"sync"

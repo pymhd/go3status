@@ -4,7 +4,7 @@ import (
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"time"
-	"github.com/pymhd/go3status/modules"
+	"go3status/modules"
 )
 
 type Config struct {
