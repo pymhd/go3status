@@ -1,10 +1,10 @@
 package main
 
 import (
-	"go3status/modules"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"time"
+	"github.com/pymhd/go3status/modules"
 )
 
 type Config struct {
