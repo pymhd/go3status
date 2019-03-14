@@ -54,7 +54,6 @@ func (cpu CPU) run(c chan ModuleOutput, cfg ModuleConfig, refresh bool) {
 			output.Color = cfg.Colors[lvl]
 		}
 	}
-	
 	if x := atomic.LoadInt32(Mute[cpu.name]); x == -1 {
 		output.FullText += " ..."
 	} else {
@@ -118,7 +117,7 @@ func getCpuPercentage() float64 {
 
 func inRange(p float64, r string) bool {
 	vals := strings.Split(r, "-")
-	if len(vals) != 0 {
+	if len(vals) != 2 {
 		return false
 	}
 	min, err := strconv.ParseFloat(vals[0], 64)
