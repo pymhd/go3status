@@ -7,7 +7,6 @@ import (
 	"os"
 	"reflect"
 	"sync"
-	"time"
 )
 
 
@@ -41,13 +40,9 @@ func (sl *StatusLine) Run() {
 		sl.Lock()
 		sl.Blocks[ch_num] = mo
 		sl.Unlock()
-		// refresh panel if urgent, value alredy injected
-		// use with caution, it is not rate-limited
-		//if mo.Refresh {
-			//fmt.Println("Trying to refresh")
-			sl.Refresh <- true
-			//fmt.Println("PUSHED REFRESH")
-		//}
+		//Better to refresh every time we accept update
+		//no need to print by ticker the same info
+		sl.Refresh <- true
 	}
 }
 
@@ -58,16 +53,8 @@ func (sl *StatusLine) Render() {
 
 	enc := json.NewEncoder(os.Stdout)
 	for {
-		select {
-		// regular output
-		case <- time.After(cfg.Global.Interval):
-			//fmt.Println("refresh by regulat time after")
-			sl.render(enc)
-		//need to refresh now
-		case <- sl.Refresh:
-			//fmt.Println("refresh by CHANEL")
-			sl.render(enc)
-		}
+		<- sl.Refresh
+		sl.render(enc)
 	}
 }
 

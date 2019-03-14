@@ -25,6 +25,7 @@ func (cpu CPU) Name() string {
 }
 
 func (cpu CPU) Run(c chan ModuleOutput, cfg ModuleConfig) {
+	//to run by start
 	cpu.run(c, cfg, false)
 
 	// to run periodically
@@ -32,10 +33,8 @@ func (cpu CPU) Run(c chan ModuleOutput, cfg ModuleConfig) {
 	for {
 		select {
 		case <-ticker.C:
-			//fmt.Println("ticker")
 			cpu.run(c, cfg, false)
 		case <-cpu.refresh:
-			//fmt.Println("by refresh")
 			cpu.run(c, cfg, true)
 		}
 	}
@@ -71,7 +70,7 @@ func (cpu CPU) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
 	// any other
 	default:
 		buttonNumber := ce.Button
-		buttonText := clickMap[ce.Button]
+		buttonText := clickMap[buttonNumber]
 		cmd, ok := cfg.ClickEvents[buttonText]
                 if !ok {
                 	//if no cmd specified
