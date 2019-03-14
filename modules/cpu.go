@@ -12,6 +12,7 @@ import (
 
 var ( 
 	s string
+	//those ints need to store previous values of cpu time
 	puser, pnice, psystem, pidle, pio, pirq, psoftirq, psteal, pguest, pguest_nice int
 )
 
@@ -112,33 +113,13 @@ func getCpuPercentage() float64 {
         cpu := 100 * float64(totald - idled)/float64(totald)
         puser, pnice, psystem, pidle, pio, pirq, psoftirq, psteal, pguest, pguest_nice = user, nice, system, idle, io, irq, softirq, steal, guest, guest_nice
         return cpu
-        //return fmt.Sprintf("%.2f%%", cpu) 
-}
-
-func inRange(p float64, r string) bool {
-	vals := strings.Split(r, "-")
-	if len(vals) != 2 {
-		return false
-	}
-	min, err := strconv.ParseFloat(vals[0], 64)
-	if err != nil {
-		return false
-	}
-	max, err := strconv.ParseFloat(vals[1], 64)
-	if err != nil {
-                return false
-        }
-        if p >= min && p <= max {
-        	return true
-        }
-        return false
-
 }
 
 
 func init() {
-	rch := make(chan bool)
-	cpu := CPU{"cpu", rch}
+	c := make(chan bool)
+	cpu := CPU{name: "cpu", refresh: c}
+	//register plugin to be avail in modele exported map variable Modules
 	Register("cpu", cpu)
 }
 
