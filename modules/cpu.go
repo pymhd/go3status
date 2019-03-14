@@ -70,8 +70,11 @@ func (cpu CPU) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
 		cpu.refresh <- true
 	// any other
 	default:
-		cmd, ok := cfg.ClickEvents[clickMap[ce.Button]]
+		buttonNumber := ce.Button
+		buttonText := clickMap[ce.Button]
+		cmd, ok := cfg.ClickEvents[buttonText]
                 if !ok {
+                	//if no cmd specified
                         break
                 }
                 execute(cmd)
@@ -85,9 +88,11 @@ func (cpu CPU) Mute() {
 
 
 func execute(cmd string) {
-	args := strings.Split(cmd, " ")
-	c := exec.Command(args[0], args[1:]...)
-	c.Start()
+	if len(cmd) > 0 {
+		args := strings.Split(cmd, " ")
+		c := exec.Command(args[0], args[1:]...)
+		c.Start()
+	}
 }
 
 func getCpuPercentage() float64 {
