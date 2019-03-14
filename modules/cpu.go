@@ -73,7 +73,7 @@ func (cpu CPU) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
 		buttonText := clickMap[buttonNumber]
 		cmd, ok := cfg.ClickEvents[buttonText]
                 if !ok {
-                	//if no cmd specified
+                	//if no cmd specified in config file
                         break
                 }
                 execute(cmd)
@@ -127,3 +127,4 @@ func init() {
 	//register plugin to be avail in modele exported map variable Modules
 	Register("cpu", cpu)
 }
+
