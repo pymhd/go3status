@@ -43,7 +43,7 @@ func (sl *StatusLine) Run() {
 		sl.Unlock()
 		// refresh panel if urgent, value alredy injected
 		// use with caution, it is not rate-limited
-		if mo.Urgent {
+		if mo.Refresh {
 			//fmt.Println("Trying to refresh")
 			sl.Refresh <- true
 			//fmt.Println("PUSHED REFRESH")

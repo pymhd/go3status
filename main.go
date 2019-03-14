@@ -10,7 +10,7 @@ var (
 
 func main() {
 
-	cfg = ParseConfig("/home/kgs/go/src/go3status/config.yaml")
+	cfg = ParseConfig("/home/mhd/go/src/go3status/config.yaml")
 	s := NewStatusLine()
 	s.Start()
 	go s.Run()

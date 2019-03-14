@@ -3,12 +3,12 @@ package modules
 import (
 	_ "fmt"
 	_ "os/exec"
+	"sync/atomic"
 	"time"
 )
 
-
 type CPU struct {
-	name  string
+	name    string
 	refresh chan bool
 }
 
@@ -22,12 +22,12 @@ func (cpu CPU) Run(c chan ModuleOutput, cfg ModuleConfig) {
 
 	// to run periodically
 	ticker := time.NewTicker(cfg.Interval)
-	for { 
+	for {
 		select {
-		case <- ticker.C:
+		case <-ticker.C:
 			//fmt.Println("ticker")
 			cpu.run(c, cfg, false)
-		case <- cpu.refresh:
+		case <-cpu.refresh:
 			//fmt.Println("by refresh")
 			cpu.run(c, cfg, true)
 		}
@@ -38,13 +38,13 @@ func (cpu CPU) run(c chan ModuleOutput, cfg ModuleConfig, urgent bool) {
 	output := ModuleOutput{}
 
 	output.FullText = "27% to run periodically ChanWriter{Chan:"
-	if Mute[cpu.name] {
+	if x := atomic.LoadInt32(Mute[cpu.name]); x == -1 {
 		output.FullText = "33%"
 	}
 	output.ShortText = "27%"
 	output.Color = cfg.Colors["good"]
 	output.Name = cpu.name
-	output.Urgent = urgent
+	output.Refresh = urgent
 	output.Markup = "pango"
 	//output.Background = "#ffffff"
 
@@ -57,12 +57,11 @@ func (cpu CPU) HandleClickEvent(ce *ClickEvent) {
 }
 
 func (cpu CPU) Mute() {
-	Mute[cpu.name] = !Mute[cpu.name]
+	atomic.StoreInt32(Mute[cpu.name], ^atomic.LoadInt32(Mute[cpu.name]))
 }
 
-
 func init() {
-        rch := make(chan bool)
+	rch := make(chan bool)
 	cpu := CPU{"cpu", rch}
 	Register("cpu", cpu)
 }

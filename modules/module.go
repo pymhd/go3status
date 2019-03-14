@@ -31,16 +31,15 @@ type ModuleOutput struct {
 	Urgent     bool   `json:"urgent"`
 	Background string `json:"background,omitempty"`
 	//pango
-	Markup string `json:"markup"`
+	Markup  string `json:"markup"`
+	Refresh bool
 }
-
 
 type ClickEvent struct {
-        Name     string   `json:"name"`
-        Instance string   `json:"instance"`
-        Button   int      `json:"button"`
-        X        int      `json:"x"`
-        Y        int      `json:"y"`
-        Mod      []string `json:"modifiers"`
+	Name     string   `json:"name"`
+	Instance string   `json:"instance"`
+	Button   int      `json:"button"`
+	X        int      `json:"x"`
+	Y        int      `json:"y"`
+	Mod      []string `json:"modifiers"`
 }
-
