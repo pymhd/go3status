@@ -3,11 +3,10 @@ package modules
 import (
 	"os"
 	"fmt"
+	"time"
 	"strings"
-	"strconv"
 	"os/exec"
 	"sync/atomic"
-	"time"
 )
 
 var ( 
@@ -58,7 +57,7 @@ func (cpu CPU) run(c chan ModuleOutput, cfg ModuleConfig, refresh bool) {
 	if x := atomic.LoadInt32(Mute[cpu.name]); x == -1 {
 		output.FullText += " ..."
 	} else {
-		output.FullText += fmt.Sprintf(" %.2f%%", percentage)
+		output.FullText += fmt.Sprintf(" %.2f%%%s", percentage, cfg.Postfix)
 	}
 	c <- output
 }
@@ -119,8 +118,7 @@ func getCpuPercentage() float64 {
 func init() {
 	c := make(chan bool)
 	cpu := CPU{name: "cpu", refresh: c}
+
 	//register plugin to be avail in modele exported map variable Modules
 	Register("cpu", cpu)
 }
-
-

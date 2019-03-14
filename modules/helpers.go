@@ -1,5 +1,10 @@
 package modules
 
+import (
+        "strings"
+        "strconv"
+)
+
 func inRange(p float64, r string) bool {
         vals := strings.Split(r, "-")
         if len(vals) != 2 {
