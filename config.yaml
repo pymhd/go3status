@@ -21,6 +21,9 @@ modules:
       wheelDown: urxvt -name __scratchpad -e htop
     extra:
       key: value  
+  title:
+    interval: 1s
+    prefix: "W: "
   ram:
     interval: 5s
     prefix: "\uf1b2"

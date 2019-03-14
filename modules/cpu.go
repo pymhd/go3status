@@ -4,8 +4,6 @@ import (
 	"os"
 	"fmt"
 	"time"
-	"strings"
-	"os/exec"
 	"sync/atomic"
 )
 
@@ -85,14 +83,6 @@ func (cpu CPU) Mute() {
 	atomic.StoreInt32(Mute[cpu.name], ^atomic.LoadInt32(Mute[cpu.name]))
 }
 
-
-func execute(cmd string) {
-	if len(cmd) > 0 {
-		args := strings.Split(cmd, " ")
-		c := exec.Command(args[0], args[1:]...)
-		c.Start()
-	}
-}
 
 func getCpuPercentage() float64 {
         var user, nice, system, idle, io, irq, softirq, steal, guest, guest_nice int

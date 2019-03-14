@@ -1,6 +1,7 @@
 package modules
 
 import (
+        "os/exec"
         "strings"
         "strconv"
 )
@@ -29,3 +30,13 @@ func inRange(p float64, r string) bool {
         return false
 
 }
+
+
+func execute(cmd string) {
+        if len(cmd) > 0 {
+                args := strings.Split(cmd, " ")
+                c := exec.Command(args[0], args[1:]...)
+                c.Start()
+        }
+}
+
