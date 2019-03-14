@@ -4,7 +4,7 @@ global:
 modules:
   cpu:
     interval: 2s500ms
-    prefix: "\uf1b2"
+    prefix: "\u2699"
     postfix: 
     colors:
       good: "#777777"

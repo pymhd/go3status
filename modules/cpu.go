@@ -56,10 +56,10 @@ func (cpu CPU) run(c chan ModuleOutput, cfg ModuleConfig, refresh bool) {
 	}
 	
 	if x := atomic.LoadInt32(Mute[cpu.name]); x == -1 {
-		output.FullText = "33%"
+		output.FullText += " ..."
+	} else {
+		output.FullText += fmt.Sprintf(" %.2f%%", percentage)
 	}
-	output.Color = cfg.Colors["good"]
-
 	c <- output
 }
 
