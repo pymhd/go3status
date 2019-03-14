@@ -47,9 +47,13 @@ func (t Title) run(c chan ModuleOutput, cfg ModuleConfig) {
 	output.Refresh = true
 	output.Markup = "pango"
 	output.FullText = cfg.Prefix
-	wn := getFocusedTitle()
-	output.FullText += wn
-	
+
+	if x := atomic.LoadInt32(Mute[t.name]); x == -1 {
+                output.FullText += "..."
+        } else {
+                output.FullText += getFocusedTitle()
+        }
+
 	c <- output
 }
 
