@@ -69,9 +69,13 @@ func (sl *StatusLine) render(e *json.Encoder) {
 func NewStatusLine() *StatusLine {
 	sl := new(StatusLine)
 	sl.Header = `{"version": 1, "click_events": true, "stop_signal": 20}`
-	for _, mod := range modules.Modules {
-		sl.Modules = append(sl.Modules, mod)
+	//sl.Modules = make([]modules.Module, len(cfg.Modules))
+	for k, _ := range cfg.Modules {
+		sl.Modules = append(sl.Modules, modules.Modules[k])
 	}
+	//for _, mod := range modules.Modules {
+	//	sl.Modules = append(sl.Modules, mod)
+	//}
 	sl.Blocks = make([]modules.ModuleOutput, len(modules.Modules))
 	sl.cases = make([]reflect.SelectCase, len(modules.Modules))
 	sl.Refresh = make(chan bool, 0)
