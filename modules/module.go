@@ -4,10 +4,15 @@ import (
 	"time"
 )
 
+const (
+	leftClick = "left"
+	rightClick = "right"
+)
+
 type Module interface {
 	Name() string
 	Run(chan ModuleOutput, ModuleConfig)
-	HandleClickEvent(*ClickEvent)
+	HandleClickEvent(*ClickEvent, ModuleConfig)
 }
 
 type ModuleConfig struct {
@@ -16,6 +21,7 @@ type ModuleConfig struct {
 	Prefix   string                 `yaml:"prefix"`
 	Postfix  string                 `yaml:"postfix"`
 	Colors   map[string]string      `yaml:"colors"`
+	ClickEvents map[string]string   `yaml:"clickEvents"` 
 	Extra    map[string]interface{} `yaml:"extra"`
 }
 

@@ -21,7 +21,7 @@ func RunClickEventsHandler() {
 		}
 		//not strange stdin
 		if len(ce.Name) > 0 {
-			modules.Modules[ce.Name].HandleClickEvent(ce)
+			modules.Modules[ce.Name].HandleClickEvent(ce, cfg.Modules[ce.Name])
 		} 
 	}
 }
