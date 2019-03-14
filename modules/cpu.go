@@ -64,17 +64,18 @@ func (cpu CPU) run(c chan ModuleOutput, cfg ModuleConfig, refresh bool) {
 
 func (cpu CPU) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
 	switch ce.Button {
-	// left click, get from cfg
-	case 1:
-		cmd, ok := cfg.ClickEvents[leftClick]
-		if !ok {
-			break
-		}
-		execute(cmd)
 	// middle, reserved, shrink panel and force refresh
 	case 2:
 		cpu.Mute()
 		cpu.refresh <- true
+	// any other
+	default:
+		cmd, ok := cfg.ClickEvents[clickMap[ce.Button]]
+                if !ok {
+                        break
+                }
+                execute(cmd)
+
 	}
 }
 

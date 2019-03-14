@@ -5,6 +5,11 @@ import (
         "strconv"
 )
 
+var (
+        clickMap =  map[int]string{1: "left", 3: "right", 4: "wheelUp", 5: "wheelDown"} 
+)
+
+
 func inRange(p float64, r string) bool {
         vals := strings.Split(r, "-")
         if len(vals) != 2 {
