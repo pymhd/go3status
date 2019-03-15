@@ -78,7 +78,7 @@ func NewStatusLine() *StatusLine {
 	for n, modmap := range cfg.Modules {
 		for name, _ := range modmap {
 			// thist panics if module not in avail modules
-			modules.Register(name) 
+			modules.Register(n, name) 
 			sl.Modules[n] = modules.Modules[n]
 		}
 	}

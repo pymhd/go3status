@@ -16,7 +16,6 @@ var (
 
 type CPU struct {
 	name    string
-	refresh chan bool
 }
 
 func (cpu CPU) Name() string {
@@ -33,7 +32,7 @@ func (cpu CPU) Run(c chan ModuleOutput, cfg ModuleConfig) {
 		select {
 		case <-ticker.C:
 			cpu.run(c, cfg)
-		case <-cpu.refresh:
+		case <- RefreshChans[cfg.Id]:
 			cpu.run(c, cfg)
 		}
 	}
@@ -66,7 +65,7 @@ func (cpu CPU) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
 	// middle, reserved, shrink panel and force refresh
 	case 2:
 		cpu.Mute(cfg.Id)
-		cpu.refresh <- true
+		RefreshChans[cfg.Id] <- true
 	// any other
 	default:
 		buttonNumber := ce.Button
@@ -113,8 +112,7 @@ func getCpuPercentage() float64 {
 
 
 func init() {
-	c := make(chan bool)
-	cpu := CPU{name: "cpu", refresh: c}
+	cpu := CPU{ name: "cpu" }
 
 	//register plugin to be avail in modele exported map variable Modules
 	selfRegister(cpu)

@@ -9,7 +9,6 @@ import (
 
 type Exec struct {
 	name    string
-	refresh chan bool
 }
 
 func (e Exec) Name() string {
@@ -26,7 +25,7 @@ func (e Exec) Run(c chan ModuleOutput, cfg ModuleConfig) {
 		select {
 		case <-ticker.C:
 			e.run(c, cfg)
-		case <-e.refresh:
+		case <-RefreshChans[cfg.Id]:
 			e.run(c, cfg)
 		}
 	}
@@ -75,7 +74,7 @@ func (e Exec) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
 	// middle, reserved, shrink panel and force refresh
 	case 2:
 		e.Mute(cfg.Id)
-		e.refresh <- true
+		RefreshChans[cfg.Id] <- true
 	// any other
 	default:
 		buttonNumber := ce.Button
@@ -96,8 +95,7 @@ func (e Exec) Mute(id int) {
 
 
 func init() {
-	c := make(chan bool)
-	e := Exec{name: "exec", refresh: c}
+	e := Exec{name: "exec"}
 
 	//register plugin to be avail in modele exported map variable Modules
 	selfRegister(e)

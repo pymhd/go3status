@@ -11,7 +11,6 @@ var i3socket *i3ipc.IPCSocket
 
 type Title struct {
 	name    string
-	refresh chan bool
 }
 
 func (t Title) Name() string {
@@ -36,7 +35,7 @@ func (t Title) Run(c chan ModuleOutput, cfg ModuleConfig) {
 		select {
 		case <-ticker.C:
 			t.run(c, cfg)
-		case <-t.refresh:
+		case <-RefreshChans[cfg.Id]:
 			t.run(c, cfg)
 		}
 	}
@@ -64,7 +63,7 @@ func (t Title) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
 	// middle, reserved, shrink panel and force refresh
 	case 2:
 		t.Mute(cfg.Id)
-		t.refresh <- true
+		RefreshChans[cfg.Id] <- true
 	// any other
 	default:
 		buttonNumber := ce.Button
@@ -92,8 +91,7 @@ func getFocusedTitle() string {
 }
 
 func init() {
-	c := make(chan bool)
-	t := Title{name: "title", refresh: c}
+	t := Title{name: "title"}
 
 	//register plugin to be avail in modele exported map variable Modules
 	selfRegister(t)

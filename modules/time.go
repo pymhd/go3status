@@ -8,7 +8,6 @@ import (
 
 type TimeModule struct {
 	name	string
-	refresh chan bool
 }
 
 func (t TimeModule) Name() string {
@@ -24,7 +23,7 @@ func (t TimeModule) Run(c chan ModuleOutput, cfg ModuleConfig) {
                 select {
                 case <-ticker.C:
                         t.run(c, cfg)
-                case <-t.refresh:
+                case <-RefreshChans[cfg.Id]:
                         t.run(c, cfg)
                 }
         }
@@ -63,7 +62,7 @@ func (t TimeModule) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
         // middle, reserved, shrink panel and force refresh
         case 2:
                 t.Mute(cfg.Id)
-                t.refresh <- true
+                RefreshChans[cfg.Id] <- true
         // any other
         default:
                 buttonNumber := ce.Button
@@ -85,8 +84,7 @@ func (t TimeModule) Mute(id int) {
 
 
 func init() {
-	c := make(chan bool)
-	tm := TimeModule{name: "time", refresh: c}
+	tm := TimeModule{name: "time"}
 	
 	selfRegister(tm)
 }
