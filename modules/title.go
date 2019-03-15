@@ -49,10 +49,15 @@ func (t Title) run(c chan ModuleOutput, cfg ModuleConfig) {
 	output.Markup = "pango"
 	output.FullText = cfg.Prefix
 
+	var max int
+	m, ok  := cfg.Extra["maxChars"]
+	if ok {
+		max, _ = m.(int)
+	}
 	if x := atomic.LoadInt32(Mute[cfg.Id]); x == -1 {
                 output.FullText += "..."
         } else {
-                output.FullText += getFocusedTitle() + cfg.Postfix
+                output.FullText += getFocusedTitle(max) + cfg.Postfix
         }
 
 	c <- output
@@ -84,10 +89,14 @@ func (t Title) Mute(id int) {
 }
 
 
-func getFocusedTitle() string {
+func getFocusedTitle(max int) string {
         node, _ := i3socket.GetTree()
         focused := node.FindFocused()
-        return focused.Window_Properties.Title
+        name := focused.Window_Properties.Title
+        if max == 0 {
+	        return name
+	}
+	return name[:max]
 
 }
 
