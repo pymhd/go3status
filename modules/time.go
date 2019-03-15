@@ -55,10 +55,31 @@ func (t TimeModule) run(c chan ModuleOutput, cfg ModuleConfig) {
 
 }
 
-func (t TimeModule) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
 
+func (t TimeModule) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
+        switch ce.Button {
+        // middle, reserved, shrink panel and force refresh
+        case 2:
+                t.Mute()
+                t.refresh <- true
+        // any other
+        default:
+                buttonNumber := ce.Button
+                buttonText := clickMap[buttonNumber]
+                cmd, ok := cfg.ClickEvents[buttonText]
+                if !ok {
+                        //if no cmd specified in config file
+                        break
+                }
+                execute(cmd)
+
+        }
 }
 
+
+func (t TimeModule) Mute() {
+        atomic.StoreInt32(Mute[t.name], ^atomic.LoadInt32(Mute[t.name]))
+}
 
 
 func init() {
