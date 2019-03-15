@@ -23,7 +23,11 @@ func (sl *StatusLine) Start() {
 	for n, module := range sl.Modules {
 		c := make(chan modules.ModuleOutput)
 		sl.cases[n] = reflect.SelectCase{Dir: reflect.SelectRecv, Chan: reflect.ValueOf(c)}
-		go module.Run(c, cfg.Modules[n][module.Name()])
+		// mc - module config
+		// id needed to mute by order
+		mc := cfg.Modules[n][module.Name()]
+		mc.Id = n
+		go module.Run(c, mc)
 	}
 }
 
@@ -74,7 +78,7 @@ func NewStatusLine() *StatusLine {
 	for n, modmap := range cfg.Modules {
 		for name, _ := range modmap {
 			// thist panics if module not in avail modules
-			modules.Register(n, name) 
+			modules.Register(name) 
 			sl.Modules[n] = modules.Modules[n]
 		}
 	}
@@ -82,6 +86,6 @@ func NewStatusLine() *StatusLine {
 	sl.Blocks = make([]modules.ModuleOutput, len(cfg.Modules))
 	sl.cases = make([]reflect.SelectCase, len(cfg.Modules))
 	sl.Refresh = make(chan bool, 0)
-	
+	//fmt.Println(modules.Mute)
 	return sl
 }

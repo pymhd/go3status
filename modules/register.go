@@ -12,15 +12,33 @@ func selfRegister(module Module) {
 }
 
 var Modules []Module
-var Mute = make(map[string]*int32, 0)
+var Mute  []*int32
 
-func Register(id int, key string) {
+func Register(key string) {
 	mod, ok := availableModules[key]
 	if !ok {
 		msg := fmt.Sprintf("Module: %s unavailable", key)
 		panic(msg)
 	}
-	Modules = append(Modules, mod)
+	if !alreadyRegistered(key) {
+		Modules = append(Modules, mod)
+	} else {
+		newRefreshChan := make(chan bool)
+		mod.refresh = newRefreshChan
+		Modules = append(Modules, mod)
+	}
+	//mute atomic per module 
 	m := int32(0)
-	Mute[mod.Name()] = &m	
+	Mute = append(Mute, &m)	
 }
+
+
+func alreadyRegistered(m string) bool {
+	for _, mod := range Modules {
+		if mod.Name() == m {
+			return true
+		}
+	}
+	return false
+}
+

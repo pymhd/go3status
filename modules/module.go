@@ -16,6 +16,7 @@ type Module interface {
 }
 
 type ModuleConfig struct {
+	Id	int
 	Name     string                 `yaml:"name"`
 	Interval time.Duration          `yaml:"interval"`
 	Prefix   string                 `yaml:"prefix"`

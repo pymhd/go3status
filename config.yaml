@@ -37,6 +37,15 @@ modules:
       #only pipes allowed, use tee to redirect output if needed
       cmd: 'cat /proc/loadavg | awk ''{print $1}'' '
       color: "#e2c96e"
+- exec:
+    interval: 5s
+    prefix: "exec: "
+    clickEvents:
+      left: urxvt -name __scratchpad -e ping 8.8.8.8
+    extra:
+      #only pipes allowed, use tee to redirect output if needed
+      cmd: 'cat /proc/loadavg | awk ''{print $2}'' '
+      color: "#e2c96e"
 
 
 #  vpn:

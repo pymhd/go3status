@@ -2,6 +2,7 @@ package modules
 
 import (
 	"time"
+	"strconv"
 	"sync/atomic"
 )
 
@@ -41,11 +42,12 @@ func (t TimeModule) run(c chan ModuleOutput, cfg ModuleConfig) {
         
         output := ModuleOutput{}
         output.Name = t.name
+        output.Instance = strconv.Itoa(cfg.Id)
         output.Refresh = true
         output.Markup = "pango"
         output.FullText = cfg.Prefix
         
-        if x := atomic.LoadInt32(Mute[t.name]); x == -1 {
+        if x := atomic.LoadInt32(Mute[cfg.Id]); x == -1 {
                 output.FullText += "..."
         } else {
                 output.FullText += now
@@ -60,7 +62,7 @@ func (t TimeModule) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
         switch ce.Button {
         // middle, reserved, shrink panel and force refresh
         case 2:
-                t.Mute()
+                t.Mute(cfg.Id)
                 t.refresh <- true
         // any other
         default:
@@ -77,8 +79,8 @@ func (t TimeModule) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
 }
 
 
-func (t TimeModule) Mute() {
-        atomic.StoreInt32(Mute[t.name], ^atomic.LoadInt32(Mute[t.name]))
+func (t TimeModule) Mute(id int) {
+        atomic.StoreInt32(Mute[id], ^atomic.LoadInt32(Mute[id]))
 }
 
 

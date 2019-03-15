@@ -4,6 +4,7 @@ import (
 	"os"
 	"fmt"
 	"time"
+	"strconv"
 	"sync/atomic"
 )
 
@@ -41,6 +42,7 @@ func (cpu CPU) Run(c chan ModuleOutput, cfg ModuleConfig) {
 func (cpu CPU) run(c chan ModuleOutput, cfg ModuleConfig) {
 	output := ModuleOutput{}
 	output.Name = cpu.name
+	output.Instance = strconv.Itoa(cfg.Id)
 	output.Refresh = true
 	output.Markup = "pango"
 	output.FullText = cfg.Prefix
@@ -51,7 +53,7 @@ func (cpu CPU) run(c chan ModuleOutput, cfg ModuleConfig) {
 			output.Color = cfg.Colors[lvl]
 		}
 	}
-	if x := atomic.LoadInt32(Mute[cpu.name]); x == -1 {
+	if x := atomic.LoadInt32(Mute[cfg.Id]); x == -1 {
 		output.FullText += " ..."
 	} else {
 		output.FullText += fmt.Sprintf(" %.2f%%%s", percentage, cfg.Postfix)
@@ -63,7 +65,7 @@ func (cpu CPU) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
 	switch ce.Button {
 	// middle, reserved, shrink panel and force refresh
 	case 2:
-		cpu.Mute()
+		cpu.Mute(cfg.Id)
 		cpu.refresh <- true
 	// any other
 	default:
@@ -79,8 +81,8 @@ func (cpu CPU) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
 	}
 }
 
-func (cpu CPU) Mute() {
-	atomic.StoreInt32(Mute[cpu.name], ^atomic.LoadInt32(Mute[cpu.name]))
+func (cpu CPU) Mute(id int) {
+	atomic.StoreInt32(Mute[id], ^atomic.LoadInt32(Mute[id]))
 }
 
 

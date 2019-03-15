@@ -1,6 +1,7 @@
 package modules
 
 import (
+	"strconv"
 	"sync/atomic"
 	"time"
 )
@@ -34,6 +35,7 @@ func (e Exec) Run(c chan ModuleOutput, cfg ModuleConfig) {
 func (e Exec) run(c chan ModuleOutput, cfg ModuleConfig) {
 	output := ModuleOutput{}
 	output.Name = e.name
+	output.Instance = strconv.Itoa(cfg.Id)
 	output.Refresh = true
 	output.Markup = "pango"
 	output.FullText = cfg.Prefix
@@ -59,7 +61,7 @@ func (e Exec) run(c chan ModuleOutput, cfg ModuleConfig) {
         		output.Color = c
         	}
         }
-	if x := atomic.LoadInt32(Mute[e.name]); x == -1 {
+	if x := atomic.LoadInt32(Mute[cfg.Id]); x == -1 {
                 output.FullText += "..."
         } else {
                 output.FullText += execute(cmd)
@@ -72,7 +74,7 @@ func (e Exec) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
 	switch ce.Button {
 	// middle, reserved, shrink panel and force refresh
 	case 2:
-		e.Mute()
+		e.Mute(cfg.Id)
 		e.refresh <- true
 	// any other
 	default:
@@ -88,8 +90,8 @@ func (e Exec) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
 	}
 }
 
-func (e Exec) Mute() {
-	atomic.StoreInt32(Mute[e.name], ^atomic.LoadInt32(Mute[e.name]))
+func (e Exec) Mute(id int) {
+	atomic.StoreInt32(Mute[id], ^atomic.LoadInt32(Mute[id]))
 }
 
 
