@@ -27,10 +27,6 @@ modules:
       wheelDown: urxvt -name __scratchpad -e htop
     extra:
       key: value  
-- time:
-    interval: 1s
-    extra:
-      format: 02-01-2006 15:04:05
 - exec:
     interval: 5s
     prefix: "exec: "
@@ -62,6 +58,11 @@ modules:
       good: 0-50
       warn: 51-75
       crit: 75-100
+- time:
+    interval: 5s
+    prefix: "\uf133 "
+    extra:
+      format: 02/01 15:04
      
 #  vpn:
 #    interval: 5s
