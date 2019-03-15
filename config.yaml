@@ -51,7 +51,18 @@ modules:
       #only pipes allowed, use tee to redirect output if needed
       cmd: pamixer --get-volume
       color: "#e2c96e"
-
+- memory:
+    interval: 5s
+    prefix: "mem: "
+    colors:
+      good: "#75c55c"
+      warn: "#e2c96e"
+      crit: "#7f0909"
+    levels:
+      good: 0-50
+      warn: 51-75
+      crit: 75-100
+     
 #  vpn:
 #    interval: 5s
 #    prefix:
