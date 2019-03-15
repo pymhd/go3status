@@ -52,6 +52,13 @@ func (e Exec) run(c chan ModuleOutput, cfg ModuleConfig) {
                 c <- output
                 return     
         }
+        color, ok := cfg.Extra["color"]
+        if ok {
+        	c, ok := color.(string)
+        	if ok {
+        		output.Color = c
+        	}
+        }
 	if x := atomic.LoadInt32(Mute[e.name]); x == -1 {
                 output.FullText += "..."
         } else {
