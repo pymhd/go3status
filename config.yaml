@@ -2,7 +2,7 @@ global:
   interval: 1s
   color: regular
 modules:
-  cpu:
+- cpu:
     interval: 2s500ms
     prefix: "\uf2db"
     postfix: " :)"
@@ -21,10 +21,10 @@ modules:
       wheelDown: urxvt -name __scratchpad -e htop
     extra:
       key: value  
-  title:
+- title:
     interval: 1s
     prefix: "W: "
-  time:
+- time:
     interval: 1s
     extra:
       format: 02-01-2006 15:04:05

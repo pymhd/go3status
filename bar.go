@@ -23,7 +23,7 @@ func (sl *StatusLine) Start() {
 	for n, module := range sl.Modules {
 		c := make(chan modules.ModuleOutput)
 		sl.cases[n] = reflect.SelectCase{Dir: reflect.SelectRecv, Chan: reflect.ValueOf(c)}
-		go module.Run(c, cfg.Modules[module.Name()])
+		go module.Run(c, cfg.Modules[n][module.Name()])
 	}
 }
 
@@ -70,12 +70,11 @@ func NewStatusLine() *StatusLine {
 	sl := new(StatusLine)
 	sl.Header = `{"version": 1, "click_events": true, "stop_signal": 20}`
 	//sl.Modules = make([]modules.Module, len(cfg.Modules))
-	for k, _ := range cfg.Modules {
-		sl.Modules = append(sl.Modules, modules.Modules[k])
+	for _, modmap := range cfg.Modules {
+		for k, _ := range modmap {
+			sl.Modules = append(sl.Modules, modules.Modules[k])
+		}
 	}
-	//for _, mod := range modules.Modules {
-	//	sl.Modules = append(sl.Modules, mod)
-	//}
 	sl.Blocks = make([]modules.ModuleOutput, len(modules.Modules))
 	sl.cases = make([]reflect.SelectCase, len(modules.Modules))
 	sl.Refresh = make(chan bool, 0)

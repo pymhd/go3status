@@ -10,6 +10,7 @@ import (
 
 func RunClickEventsHandler() {
 	scanner := bufio.NewScanner(os.Stdin)
+	cache := make(map[string]int)
 	for scanner.Scan() {
 		b := scanner.Bytes()
 		ce := new(modules.ClickEvent)
@@ -21,7 +22,20 @@ func RunClickEventsHandler() {
 		}
 		//not strange stdin
 		if len(ce.Name) > 0 {
-			modules.Modules[ce.Name].HandleClickEvent(ce, cfg.Modules[ce.Name])
+			name := ce.Name
+			cached_n, ok := cache[name]
+			if ok {
+				modules.Modules[name].HandleClickEvent(ce, cfg.Modules[cached_n][name])
+				continue
+			}
+			for n, modmap := range cfg.Modules {
+				for k, _ := range modmap {
+					if k == name {
+						cache[name] = n
+						modules.Modules[name].HandleClickEvent(ce, cfg.Modules[n][name])
+					}
+				}
+			}
 		} 
 	}
 }

@@ -7,12 +7,14 @@ import (
 	"go3status/modules"
 )
 
+type ModuleConfigMap map[string]modules.ModuleConfig 
+
 type Config struct {
 	Global struct {
 		Interval time.Duration `yaml:"interval"`
 		Color    string        `yaml:"color"`
 	} `yaml:"global"`
-	Modules map[string]modules.ModuleConfig `yaml:"modules"`
+	Modules []ModuleConfigMap `yaml:"modules"`
 }
 
 func ParseConfig(filename string) *Config {
