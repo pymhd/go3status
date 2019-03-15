@@ -28,6 +28,14 @@ modules:
     interval: 1s
     extra:
       format: 02-01-2006 15:04:05
+#- exec:
+#    interval: 5s
+#    prefix: "exec: "
+#    extra:
+#      cmd:
+#      - "cat /proc/loadavg"
+
+
 #  vpn:
 #    interval: 5s
 #    prefix:

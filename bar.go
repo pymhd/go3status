@@ -75,8 +75,8 @@ func NewStatusLine() *StatusLine {
 			sl.Modules = append(sl.Modules, modules.Modules[k])
 		}
 	}
-	sl.Blocks = make([]modules.ModuleOutput, len(modules.Modules))
-	sl.cases = make([]reflect.SelectCase, len(modules.Modules))
+	sl.Blocks = make([]modules.ModuleOutput, len(cfg.Modules))
+	sl.cases = make([]reflect.SelectCase, len(cfg.Modules))
 	sl.Refresh = make(chan bool, 0)
 	return sl
 }
