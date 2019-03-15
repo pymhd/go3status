@@ -1,6 +1,8 @@
 package modules
 
 import (
+        "fmt"
+        "bytes"
         "os/exec"
         "strings"
         "strconv"
@@ -32,11 +34,15 @@ func inRange(p float64, r string) bool {
 }
 
 
-func execute(cmd string) {
-        if len(cmd) > 0 {
-                args := strings.Split(cmd, " ")
-                c := exec.Command(args[0], args[1:]...)
-                c.Start()
+func execute(oneliner string) string {
+        if len(oneliner) == 0 {
+                return "Wrong cmd"
         }
+        out, err := exec.Command("bash", "-c", oneliner).Output()        
+        if err != nil {
+                return fmt.Sprintf("Failed to exec (%s) (%s)", oneliner, err)
+        }
+        
+        return fmt.Sprintf("%s", bytes.Trim(out, " \n,:\t\""))
 }
 
