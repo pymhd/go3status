@@ -3,6 +3,7 @@ package modules
 import (
         "fmt"
         "bytes"
+        "time"
         "os/exec"
         "strings"
         "strconv"
@@ -38,11 +39,20 @@ func execute(oneliner string) string {
         if len(oneliner) == 0 {
                 return "Wrong cmd"
         }
-        out, err := exec.Command("bash", "-c", oneliner).Output()        
-        if err != nil {
-                return fmt.Sprintf("Failed to exec (%s) (%s)", oneliner, err)
-        }
+        res := make(chan string)
+        go func(c chan string) {
+                out, err := exec.Command("bash", "-c", oneliner).Output()
+                if err != nil {
+                        c <- fmt.Sprintf("Failed to exec (%s) (%s)", oneliner, err)
+                        return
+                }
+                c <- fmt.Sprintf("%s", bytes.Trim(out, " \n,:\t\""))
+        }(res)
         
-        return fmt.Sprintf("%s", bytes.Trim(out, " \n,:\t\""))
+        select {
+        case result := <- res: 
+                return result
+        case <- time.After(500 * time.Millisecond):
+                return ""
+        }
 }
-
