@@ -73,6 +73,7 @@ func (t TimeModule) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
                         break
                 }
                 execute(cmd)
+                RefreshChans[cfg.Id] <- true
 
         }
 }

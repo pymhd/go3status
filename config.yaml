@@ -39,12 +39,13 @@ modules:
       color: "#e2c96e"
 - exec:
     interval: 5s
-    prefix: "exec: "
+    prefix: "vol: "
     clickEvents:
-      left: urxvt -name __scratchpad -e ping 8.8.8.8
+      wheelUp: pamixer -i 2
+      wheelDown: pamixer -d 2
     extra:
       #only pipes allowed, use tee to redirect output if needed
-      cmd: 'cat /proc/loadavg | awk ''{print $2}'' '
+      cmd: pamixer --get-volume
       color: "#e2c96e"
 
 

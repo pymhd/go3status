@@ -85,6 +85,7 @@ func (e Exec) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
                         break
                 }
                 execute(cmd)
+                RefreshChans[cfg.Id] <- true
 
 	}
 }

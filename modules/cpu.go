@@ -76,6 +76,7 @@ func (cpu CPU) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
                         break
                 }
                 execute(cmd)
+                RefreshChans[cfg.Id] <- true
 
 	}
 }
