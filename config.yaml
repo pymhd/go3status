@@ -2,6 +2,9 @@ global:
   interval: 1s
   color: regular
 modules:
+- title:
+    interval: 1s
+    prefix: "W: "
 - cpu:
     interval: 2s500ms
     prefix: "\uf2db"
@@ -21,9 +24,6 @@ modules:
       wheelDown: urxvt -name __scratchpad -e htop
     extra:
       key: value  
-- title:
-    interval: 1s
-    prefix: "W: "
 - time:
     interval: 1s
     extra:
