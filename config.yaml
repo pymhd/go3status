@@ -5,13 +5,13 @@ modules:
 - title:
     interval: 1s
     prefix: "W: "
-    postfix: blabla
+    postfix: 
     extra:
       maxChars: 64
 - cpu:
     interval: 2s500ms
     prefix: "\uf2db"
-    postfix: " :)"
+    postfix: 
     colors:
       good: "#75c55c"
       warn: "#e2c96e"
@@ -27,33 +27,9 @@ modules:
       wheelDown: urxvt -name __scratchpad -e htop
     extra:
       key: value  
-- time:
-    interval: 1s
-    extra:
-      format: 02-01-2006 15:04:05
-- exec:
-    interval: 5s
-    prefix: "exec: "
-    clickEvents:
-      left: urxvt -name __scratchpad -e ping 8.8.8.8
-    extra:
-      #only pipes allowed, use tee to redirect output if needed
-      cmd: 'cat /proc/loadavg | awk ''{print $1}'' '
-      color: "#e2c96e"
-- exec:
-    interval: 5s
-    prefix: "vol: "
-    postfix: "%"
-    clickEvents:
-      wheelUp: pamixer -i 2
-      wheelDown: pamixer -d 2
-    extra:
-      #only pipes allowed, use tee to redirect output if needed
-      cmd: pamixer --get-volume
-      color: "#e2c96e"
 - memory:
     interval: 5s
-    prefix: "mem: "
+    prefix: " "
     colors:
       good: "#75c55c"
       warn: "#e2c96e"
@@ -62,6 +38,31 @@ modules:
       good: 0-50
       warn: 51-75
       crit: 75-100
+- exec:
+    interval: 5s
+    prefix: "\uf109 "
+    clickEvents:
+      left: urxvt -name __scratchpad -e ping 8.8.8.8
+    extra:
+      #only pipes allowed, use tee to redirect output if needed
+      cmd: 'cat /proc/loadavg | awk ''{print $1}'' '
+      color: "#e2c96e"
+- exec:
+    interval: 5s
+    prefix: "\uf027 "
+    postfix: "%"
+    clickEvents:
+      wheelUp: pamixer -i 2
+      wheelDown: pamixer -d 2
+    extra:
+      #only pipes allowed, use tee to redirect output if needed
+      cmd: pamixer --get-volume
+      color: "#e2c96e"
+- time:
+    interval: 1s
+    prefix: "\uf274 "
+    extra:
+      format: 02-01-2006 15:04:05
      
 #  vpn:
 #    interval: 5s
