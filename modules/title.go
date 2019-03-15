@@ -93,7 +93,7 @@ func getFocusedTitle(max int) string {
         node, _ := i3socket.GetTree()
         focused := node.FindFocused()
         name := focused.Window_Properties.Title
-        if max == 0 {
+        if max == 0 || len(name) <= max {
 	        return name
 	}
 	return name[:max]
