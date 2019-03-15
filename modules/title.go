@@ -94,6 +94,6 @@ func init() {
 	t := Title{name: "title", refresh: c}
 
 	//register plugin to be avail in modele exported map variable Modules
-	Register(t)
+	selfRegister(t)
 }
 

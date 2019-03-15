@@ -25,14 +25,14 @@ func RunClickEventsHandler() {
 			name := ce.Name
 			cached_n, ok := cache[name]
 			if ok {
-				modules.Modules[name].HandleClickEvent(ce, cfg.Modules[cached_n][name])
+				modules.Modules[cached_n].HandleClickEvent(ce, cfg.Modules[cached_n][name])
 				continue
 			}
 			for n, modmap := range cfg.Modules {
 				for k, _ := range modmap {
 					if k == name {
 						cache[name] = n
-						modules.Modules[name].HandleClickEvent(ce, cfg.Modules[n][name])
+						modules.Modules[n].HandleClickEvent(ce, cfg.Modules[n][name])
 					}
 				}
 			}

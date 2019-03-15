@@ -69,14 +69,19 @@ func (sl *StatusLine) render(e *json.Encoder) {
 func NewStatusLine() *StatusLine {
 	sl := new(StatusLine)
 	sl.Header = `{"version": 1, "click_events": true, "stop_signal": 20}`
-	//sl.Modules = make([]modules.Module, len(cfg.Modules))
-	for _, modmap := range cfg.Modules {
-		for k, _ := range modmap {
-			sl.Modules = append(sl.Modules, modules.Modules[k])
+	
+	sl.Modules = make([]modules.Module, len(cfg.Modules))
+	for n, modmap := range cfg.Modules {
+		for name, _ := range modmap {
+			// thist panics if module not in avail modules
+			modules.Register(n, name) 
+			sl.Modules[n] = modules.Modules[n]
 		}
 	}
+	
 	sl.Blocks = make([]modules.ModuleOutput, len(cfg.Modules))
 	sl.cases = make([]reflect.SelectCase, len(cfg.Modules))
 	sl.Refresh = make(chan bool, 0)
+	
 	return sl
 }

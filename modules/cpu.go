@@ -115,6 +115,6 @@ func init() {
 	cpu := CPU{name: "cpu", refresh: c}
 
 	//register plugin to be avail in modele exported map variable Modules
-	Register(cpu)
+	selfRegister(cpu)
 }
 

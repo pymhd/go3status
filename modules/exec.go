@@ -98,6 +98,5 @@ func init() {
 	e := Exec{name: "exec", refresh: c}
 
 	//register plugin to be avail in modele exported map variable Modules
-	Register(e)
+	selfRegister(e)
 }
-

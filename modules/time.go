@@ -86,5 +86,5 @@ func init() {
 	c := make(chan bool)
 	tm := TimeModule{name: "time", refresh: c}
 	
-	Register(tm)
+	selfRegister(tm)
 }
