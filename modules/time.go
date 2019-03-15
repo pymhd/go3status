@@ -49,7 +49,7 @@ func (t TimeModule) run(c chan ModuleOutput, cfg ModuleConfig) {
         if x := atomic.LoadInt32(Mute[cfg.Id]); x == -1 {
                 output.FullText += "..."
         } else {
-                output.FullText += now
+                output.FullText += now + cfg.Postfix
         }
 
         c <- output

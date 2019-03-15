@@ -40,6 +40,7 @@ modules:
 - exec:
     interval: 5s
     prefix: "vol: "
+    postfix: "%"
     clickEvents:
       wheelUp: pamixer -i 2
       wheelDown: pamixer -d 2

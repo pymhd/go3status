@@ -52,7 +52,7 @@ func (t Title) run(c chan ModuleOutput, cfg ModuleConfig) {
 	if x := atomic.LoadInt32(Mute[cfg.Id]); x == -1 {
                 output.FullText += "..."
         } else {
-                output.FullText += getFocusedTitle()
+                output.FullText += getFocusedTitle() + cfg.Postfix
         }
 
 	c <- output
