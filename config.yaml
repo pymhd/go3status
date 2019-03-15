@@ -5,8 +5,9 @@ modules:
 - title:
     interval: 1s
     prefix: "W: "
+    postfix: blabla
     extra:
-      maxChars: 32
+      maxChars: 64
 - cpu:
     interval: 2s500ms
     prefix: "\uf2db"
