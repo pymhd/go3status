@@ -48,7 +48,6 @@ modules:
       cmd: pamixer --get-volume
       color: "#e2c96e"
 
-
 #  vpn:
 #    interval: 5s
 #    prefix:
