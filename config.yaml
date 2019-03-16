@@ -51,6 +51,24 @@ modules:
       #only pipes allowed, use tee to redirect output if needed
       cmd: 'cat /proc/loadavg | awk ''{print $1}'' '
       color: "#e2c96e"
+- hdd:
+    interval: 10s
+    prefix: " " 
+    postfix:
+    colors:
+      good: "#75c55c"
+      warn: "#e2c96e"
+      crit: "#7f0909"
+    levels:
+      good: 0-60
+      warn: 61-80
+      crit: 81-100
+    clickEvents:
+      left: thunar
+    extra:
+      mountPoint: /
+      # $avail, $path, $percentage  also available =)
+      format: '{{printf "%.1f" $used}}/{{printf "%.1f" $total}} ({{printf "%.0f" $percentage}}%)'
 - exec:
     interval: 5s
     prefix: "\uf027 "
