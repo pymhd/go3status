@@ -67,7 +67,7 @@ modules:
       left: thunar
     extra:
       mountPoint: /
-      # $avail, $path, $percentage  also available =)
+      # $avail, $path, $percentage  also available as float64
       format: '{{printf "%.1f" $used}}/{{printf "%.1f" $total}} ({{printf "%.0f" $percentage}}%)'
 - exec:
     interval: 5s
