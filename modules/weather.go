@@ -19,6 +19,7 @@ const (
 	thunderIcon         = ""
 	windIcon            = "\u2635"
 	smogIcon            = "\uf75f"
+	celsiusIcon	    = "\u00B0" //"\u2103"
 )
 
 var (
@@ -101,7 +102,7 @@ func (w Weather) run(c chan ModuleOutput, cfg ModuleConfig) {
 	if !ok {
 		icon = smogIcon
 	}
-	forecast := fmt.Sprintf("%s: %s %.0f (%d m/s)", loc.Name, icon, wf.Main.Temp, wf.Wind.Speed)
+	forecast := fmt.Sprintf("%s: %s %.0f%s (%d m/s)", loc.Name, icon, wf.Main.Temp, celsiusIcon, wf.Wind.Speed)
 
 	if x := atomic.LoadInt32(Mute[cfg.Id]); x == -1 {
 		output.FullText += forecast[strings.Index(forecast, ":")+2:]
@@ -146,7 +147,7 @@ func getLocation() *location {
 	}
 	defer res.Body.Close()
 	if err := json.NewDecoder(res.Body).Decode(loc); err != nil {
-		fmt.Println("Not worked out")
+		panic(err)
 	}
 	return loc
 }
@@ -156,7 +157,7 @@ func getWeather(l *location) *weather {
 	coord := strings.Split(l.Coord, ",")
 	var url string
 	if len(l.rewrite) > 0 {
-		url = fmt.Sprintf("http://api.openweathermap.org/data/2.5/weather?appid=%s&q=%s", OpenWeatherMapToken, l.rewrite)
+		url = fmt.Sprintf("http://api.openweathermap.org/data/2.5/weather?appid=%s&q=%s&units=metric", OpenWeatherMapToken, l.rewrite)
 	} else {
 		url = fmt.Sprintf("http://api.openweathermap.org/data/2.5/weather?appid=%s&lat=%s&lon=%s&units=metric", OpenWeatherMapToken, coord[0], coord[1])
 	}
@@ -166,7 +167,7 @@ func getWeather(l *location) *weather {
 	}
 	defer res.Body.Close()
 	if err := json.NewDecoder(res.Body).Decode(w); err != nil {
-		fmt.Println("Not worked out")
+		return w
 	}
 	return w
 
