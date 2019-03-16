@@ -8,6 +8,10 @@ modules:
     postfix: 
     extra:
       maxChars: 64
+- weather:
+    inrerval: 30m
+    extra:
+      location: auto
 - cpu:
     interval: 2s500ms
     prefix: "\uf2db"
