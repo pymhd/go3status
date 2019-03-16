@@ -92,7 +92,7 @@ func getMemory() (float64, float64) {
 	meminfo, _ := os.Open("/proc/meminfo")
 	defer meminfo.Close()
 	
-	var total, free, avail string
+	var total,  avail string
 	var done int
 	scanner := bufio.NewScanner(meminfo)
 	for scanner.Scan() {
@@ -102,22 +102,18 @@ func getMemory() (float64, float64) {
 		case "MemTotal:":
 			total = sl[1]
 			done += 1 
-		case "MemFree:": 
-			free = sl[1]
-			done += 1
 		case "MemAvailable:":
 			avail = sl[1]
 			done += 1
 		}
-		if done == 3 {
+		if done == 2 {
 			break
 		} 
 	}	
 	totalF, _ := strconv.ParseFloat(total, 64)
-	freeF, _ := strconv.ParseFloat(free, 64) 
 	availF, _ := strconv.ParseFloat(avail, 64)
 	
-	return totalF - freeF - availF, totalF
+	return totalF - availF, totalF
 }
 
 func init() {
