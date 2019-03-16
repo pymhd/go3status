@@ -61,7 +61,7 @@ func (e Exec) run(c chan ModuleOutput, cfg ModuleConfig) {
         	}
         }
 	if x := atomic.LoadInt32(Mute[cfg.Id]); x == -1 {
-                output.FullText += "..."
+                output.FullText += "..." + cfg.Postfix
         } else {
                 output.FullText += execute(cmd) + cfg.Postfix
         }

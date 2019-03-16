@@ -53,7 +53,7 @@ func (cpu CPU) run(c chan ModuleOutput, cfg ModuleConfig) {
 		}
 	}
 	if x := atomic.LoadInt32(Mute[cfg.Id]); x == -1 {
-		output.FullText += " ..."
+		output.FullText += " ..." + cfg.Postfix
 	} else {
 		output.FullText += fmt.Sprintf(" %.2f%%%s", percentage, cfg.Postfix)
 	}
