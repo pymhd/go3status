@@ -9,7 +9,7 @@ modules:
     extra:
       maxChars: 64
 - weather:
-    inrerval: 30m
+    interval: 30m
     extra:
       location: auto
 - cpu:
