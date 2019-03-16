@@ -11,7 +11,7 @@ import (
 
 const (
         BaseTemplate = `{{printf "%.1f" $used}}/{{printf "%.1f" $total}} (printf "%.0f" $percentage)`
-        TemplatePrefix = `{{$used := .Used}}{{$total := .Total}}{{$avail := .Avail}}{{$percentage := .Percentage}}`
+        TemplatePrefix = `{{$path := .Path}}{{$used := .Used}}{{$total := .Total}}{{$avail := .Avail}}{{$percentage := .Percentage}}`
 )
 
 type filesystem struct {
