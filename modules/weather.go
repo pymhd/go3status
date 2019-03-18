@@ -17,13 +17,13 @@ const (
 	sunIcon             = "\uf185"
 	cloudIcon           = "\uf0c2"
 	thunderIcon         = ""
-	windIcon            = "\u2635"
+
 	smogIcon            = "\uf75f"
-	celsiusIcon	    = "\u00B0" //"\u2103"
+	celsiusIcon         = "\u00B0" //"\u2103"
 )
 
 var (
-	iconSet map[string]string = map[string]string{"Clear": sunIcon, "Clouds": cloudIcon, "Thunderstorm": thunderIcon,
+	iconSet = map[string]string{"Clear": sunIcon, "Clouds": cloudIcon, "Thunderstorm": thunderIcon,
 		"Drizzle": rainIcon, "Rain": rainIcon, "Snow": snowIcon}
 
 	loc *location

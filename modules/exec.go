@@ -6,9 +6,8 @@ import (
 	"time"
 )
 
-
 type Exec struct {
-	name    string
+	name string
 }
 
 func (e Exec) Name() string {
@@ -38,33 +37,33 @@ func (e Exec) run(c chan ModuleOutput, cfg ModuleConfig) {
 	output.Refresh = true
 	output.Markup = "pango"
 	output.FullText = cfg.Prefix
-	
+
 	s, ok := cfg.Extra["cmd"]
 	if !ok {
 		output.FullText = "Provide command"
 		output.Color = "#7f0909"
 		c <- output
-		return			
+		return
 	}
 	cmd, ok := s.(string)
 	if !ok {
-                output.FullText = "Wrong cmd"
-                output.Color = "#7f0909"
-                c <- output
-                return     
-        }
-        color, ok := cfg.Extra["color"]
-        if ok {
-        	c, ok := color.(string)
-        	if ok {
-        		output.Color = c
-        	}
-        }
+		output.FullText = "Wrong cmd"
+		output.Color = "#7f0909"
+		c <- output
+		return
+	}
+	color, ok := cfg.Extra["color"]
+	if ok {
+		c, ok := color.(string)
+		if ok {
+			output.Color = c
+		}
+	}
 	if x := atomic.LoadInt32(Mute[cfg.Id]); x == -1 {
-                output.FullText += "..." + cfg.Postfix
-        } else {
-                output.FullText += execute(cmd) + cfg.Postfix
-        }
+		output.FullText += "..." + cfg.Postfix
+	} else {
+		output.FullText += execute(cmd) + cfg.Postfix
+	}
 
 	c <- output
 }
@@ -80,12 +79,12 @@ func (e Exec) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
 		buttonNumber := ce.Button
 		buttonText := clickMap[buttonNumber]
 		cmd, ok := cfg.ClickEvents[buttonText]
-                if !ok {
-                	//if no cmd specified in config file
-                        break
-                }
-                execute(cmd)
-                RefreshChans[cfg.Id] <- true
+		if !ok {
+			//if no cmd specified in config file
+			break
+		}
+		execute(cmd)
+		RefreshChans[cfg.Id] <- true
 
 	}
 }
@@ -93,7 +92,6 @@ func (e Exec) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
 func (e Exec) Mute(id int) {
 	atomic.StoreInt32(Mute[id], ^atomic.LoadInt32(Mute[id]))
 }
-
 
 func init() {
 	e := Exec{name: "exec"}

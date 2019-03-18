@@ -1,12 +1,12 @@
 package main
 
 import (
-	"os"
-	_ "fmt"
-	"strconv"
 	"bufio"
 	"encoding/json"
+	_ "fmt"
 	"go3status/modules"
+	"os"
+	"strconv"
 )
 
 func RunClickEventsHandler() {
@@ -15,7 +15,7 @@ func RunClickEventsHandler() {
 	for scanner.Scan() {
 		b := scanner.Bytes()
 		ce := new(modules.ClickEvent)
-		
+
 		if json.Valid(b) {
 			json.Unmarshal(b, ce)
 		} else {
@@ -32,14 +32,14 @@ func RunClickEventsHandler() {
 			//	modules.Modules[cached_n].HandleClickEvent(ce, mc)
 			//	continue
 			//}
-			for n, _ := range cfg.Modules {
+			for n := range cfg.Modules {
 				if strconv.Itoa(n) == instance {
-						//cache[name] = n
-						mc := cfg.Modules[n][name]
-						mc.Id = n
-						modules.Modules[n].HandleClickEvent(ce, mc)
+					//cache[name] = n
+					mc := cfg.Modules[n][name]
+					mc.Id = n
+					modules.Modules[n].HandleClickEvent(ce, mc)
 				}
 			}
-		} 
+		}
 	}
 }

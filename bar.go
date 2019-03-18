@@ -1,14 +1,13 @@
 package main
 
 import (
-	"fmt"
 	"encoding/json"
+	"fmt"
 	"go3status/modules"
 	"os"
 	"reflect"
 	"sync"
 )
-
 
 type StatusLine struct {
 	sync.Mutex
@@ -33,7 +32,7 @@ func (sl *StatusLine) Start() {
 
 func (sl *StatusLine) Run() {
 	for {
-		ch_num, value, _ := reflect.Select(sl.cases)
+		chNum, value, _ := reflect.Select(sl.cases)
 
 		mo, ok := value.Interface().(modules.ModuleOutput)
 		if !ok {
@@ -42,7 +41,7 @@ func (sl *StatusLine) Run() {
 		}
 		//Lock to update Statsuses field
 		sl.Lock()
-		sl.Blocks[ch_num] = mo
+		sl.Blocks[chNum] = mo
 		sl.Unlock()
 		//Better to refresh every time we accept update
 		//no need to print by ticker the same info
@@ -57,7 +56,7 @@ func (sl *StatusLine) Render() {
 
 	enc := json.NewEncoder(os.Stdout)
 	for {
-		<- sl.Refresh
+		<-sl.Refresh
 		sl.render(enc)
 	}
 }
@@ -73,16 +72,16 @@ func (sl *StatusLine) render(e *json.Encoder) {
 func NewStatusLine() *StatusLine {
 	sl := new(StatusLine)
 	sl.Header = `{"version": 1, "click_events": true, "stop_signal": 20}`
-	
+
 	sl.Modules = make([]modules.Module, len(cfg.Modules))
 	for n, modmap := range cfg.Modules {
-		for name, _ := range modmap {
+		for name := range modmap {
 			// thist panics if module not in avail modules
-			modules.Register(n, name) 
+			modules.Register(n, name)
 			sl.Modules[n] = modules.Modules[n]
 		}
 	}
-	
+
 	sl.Blocks = make([]modules.ModuleOutput, len(cfg.Modules))
 	sl.cases = make([]reflect.SelectCase, len(cfg.Modules))
 	sl.Refresh = make(chan bool, 0)

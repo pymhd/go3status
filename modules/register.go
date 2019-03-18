@@ -7,6 +7,7 @@ import (
 //var Modules = make(map[string]Module, 0)
 
 var availableModules = make(map[string]Module, 0)
+
 func selfRegister(module Module) {
 	availableModules[module.Name()] = module
 }

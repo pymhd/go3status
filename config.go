@@ -1,13 +1,13 @@
 package main
 
 import (
+	"go3status/modules"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"time"
-	"go3status/modules"
 )
 
-type ModuleConfigMap map[string]modules.ModuleConfig 
+type ModuleConfigMap map[string]modules.ModuleConfig
 
 type Config struct {
 	Global struct {

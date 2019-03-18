@@ -1,17 +1,17 @@
 package modules
 
 import (
-	"os"
+	"bufio"
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
-	"bufio"
 	"sync/atomic"
 	"time"
 )
 
 type Memory struct {
-	name    string
+	name string
 }
 
 func (m Memory) Name() string {
@@ -41,24 +41,23 @@ func (m Memory) run(c chan ModuleOutput, cfg ModuleConfig) {
 	output.Refresh = true
 	output.Markup = "pango"
 	output.FullText = cfg.Prefix
-	
+
 	memUsed, memTotal := getMemory()
-	percentage := 100 * (memUsed/memTotal)
-	
+	percentage := 100 * (memUsed / memTotal)
+
 	for lvl, val := range cfg.Levels {
-                if inRange(percentage, val) {
-                        output.Color = cfg.Colors[lvl]
-                }
-        }
-	memoryRepr := fmt.Sprintf("%.1f/%.1f (%.0f%%)%s", memUsed / 1048576, memTotal / 1048576, percentage, cfg.Postfix) 
-	
-	
+		if inRange(percentage, val) {
+			output.Color = cfg.Colors[lvl]
+		}
+	}
+	memoryRepr := fmt.Sprintf("%.1f/%.1f (%.0f%%)%s", memUsed/1048576, memTotal/1048576, percentage, cfg.Postfix)
+
 	if x := atomic.LoadInt32(Mute[cfg.Id]); x == -1 {
-                output.FullText += "..." + cfg.Postfix
-        } else {
-                output.FullText += memoryRepr
-        }
-         
+		output.FullText += "..." + cfg.Postfix
+	} else {
+		output.FullText += memoryRepr
+	}
+
 	c <- output
 }
 
@@ -73,12 +72,12 @@ func (m Memory) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
 		buttonNumber := ce.Button
 		buttonText := clickMap[buttonNumber]
 		cmd, ok := cfg.ClickEvents[buttonText]
-                if !ok {
-                	//if no cmd specified in config file
-                        break
-                }
-                execute(cmd)
-                RefreshChans[cfg.Id] <- true
+		if !ok {
+			//if no cmd specified in config file
+			break
+		}
+		execute(cmd)
+		RefreshChans[cfg.Id] <- true
 
 	}
 }
@@ -87,12 +86,11 @@ func (m Memory) Mute(id int) {
 	atomic.StoreInt32(Mute[id], ^atomic.LoadInt32(Mute[id]))
 }
 
-
 func getMemory() (float64, float64) {
 	meminfo, _ := os.Open("/proc/meminfo")
 	defer meminfo.Close()
-	
-	var total,  avail string
+
+	var total, avail string
 	var done int
 	scanner := bufio.NewScanner(meminfo)
 	for scanner.Scan() {
@@ -101,18 +99,18 @@ func getMemory() (float64, float64) {
 		switch sl[0] {
 		case "MemTotal:":
 			total = sl[1]
-			done += 1 
+			done += 1
 		case "MemAvailable:":
 			avail = sl[1]
 			done += 1
 		}
 		if done == 2 {
 			break
-		} 
-	}	
+		}
+	}
 	totalF, _ := strconv.ParseFloat(total, 64)
 	availF, _ := strconv.ParseFloat(avail, 64)
-	
+
 	return totalF - availF, totalF
 }
 
@@ -122,4 +120,3 @@ func init() {
 	//register plugin to be avail in modele exported map variable Modules
 	selfRegister(m)
 }
-

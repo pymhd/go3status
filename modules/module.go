@@ -4,11 +4,6 @@ import (
 	"time"
 )
 
-const (
-	leftClick = "left"
-	rightClick = "right"
-)
-
 type Module interface {
 	Name() string
 	Run(chan ModuleOutput, ModuleConfig)
@@ -16,15 +11,15 @@ type Module interface {
 }
 
 type ModuleConfig struct {
-	Id	int
-	Name     string                 `yaml:"name"`
-	Interval time.Duration          `yaml:"interval"`
-	Prefix   string                 `yaml:"prefix"`
-	Postfix  string                 `yaml:"postfix"`
-	Colors   map[string]string      `yaml:"colors"`
-	Levels  map[string]string	`yaml:"levels"`
-	ClickEvents map[string]string   `yaml:"clickEvents"` 
-	Extra    map[string]interface{} `yaml:"extra"`
+	Id          int
+	Name        string                 `yaml:"name"`
+	Interval    time.Duration          `yaml:"interval"`
+	Prefix      string                 `yaml:"prefix"`
+	Postfix     string                 `yaml:"postfix"`
+	Colors      map[string]string      `yaml:"colors"`
+	Levels      map[string]string      `yaml:"levels"`
+	ClickEvents map[string]string      `yaml:"clickEvents"`
+	Extra       map[string]interface{} `yaml:"extra"`
 }
 
 type ModuleOutput struct {
