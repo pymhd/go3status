@@ -5,13 +5,17 @@ modules:
 - title:
     interval: 1s
     prefix: "W: "
-    postfix: blabla
+    postfix: 
     extra:
       maxChars: 64
+- weather:
+    interval: 30m
+    extra:
+      location: auto
 - cpu:
     interval: 2s500ms
     prefix: "\uf2db"
-    postfix: " :)"
+    postfix: 
     colors:
       good: "#75c55c"
       warn: "#e2c96e"
@@ -27,29 +31,9 @@ modules:
       wheelDown: urxvt -name __scratchpad -e htop
     extra:
       key: value  
-- exec:
-    interval: 5s
-    prefix: "exec: "
-    clickEvents:
-      left: urxvt -name __scratchpad -e ping 8.8.8.8
-    extra:
-      #only pipes allowed, use tee to redirect output if needed
-      cmd: 'cat /proc/loadavg | awk ''{print $1}'' '
-      color: "#e2c96e"
-- exec:
-    interval: 5s
-    prefix: "vol: "
-    postfix: "%"
-    clickEvents:
-      wheelUp: pamixer -i 2
-      wheelDown: pamixer -d 2
-    extra:
-      #only pipes allowed, use tee to redirect output if needed
-      cmd: pamixer --get-volume
-      color: "#e2c96e"
 - memory:
     interval: 5s
-    prefix: "mem: "
+    prefix: " "
     colors:
       good: "#75c55c"
       warn: "#e2c96e"
@@ -58,6 +42,44 @@ modules:
       good: 0-50
       warn: 51-75
       crit: 75-100
+- exec:
+    interval: 5s
+    prefix: "\uf109 "
+    clickEvents:
+      left: urxvt -name __scratchpad -e ping 8.8.8.8
+    extra:
+      #only pipes allowed, use tee to redirect output if needed
+      cmd: 'cat /proc/loadavg | awk ''{print $1}'' '
+      color: "#e2c96e"
+- hdd:
+    interval: 10s
+    prefix: " " 
+    postfix:
+    colors:
+      good: "#75c55c"
+      warn: "#e2c96e"
+      crit: "#7f0909"
+    levels:
+      good: 0-60
+      warn: 61-80
+      crit: 81-100
+    clickEvents:
+      left: thunar
+    extra:
+      mountPoint: /
+      # $avail, $path, $percentage  also available as float64
+      format: '{{printf "%.1f" $used}}/{{printf "%.1f" $total}} ({{printf "%.0f" $percentage}}%)'
+- exec:
+    interval: 5s
+    prefix: "\uf027 "
+    postfix: "%"
+    clickEvents:
+      wheelUp: pamixer -i 2
+      wheelDown: pamixer -d 2
+    extra:
+      #only pipes allowed, use tee to redirect output if needed
+      cmd: pamixer --get-volume
+      color: "#e2c96e"
 - time:
     interval: 5s
     prefix: "\uf133 "
