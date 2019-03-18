@@ -11,7 +11,7 @@ import (
 var (
 	s string
 	//those ints need to store previous values of cpu time
-	puser, pnice, psystem, pidle, pio, pirq, psoftirq, psteal, _, pguestNice int
+	puser, pnice, psystem, pidle, pio, pirq, psoftirq, psteal, _, _ int
 )
 
 type CPU struct {
@@ -106,7 +106,7 @@ func getCpuPercentage() float64 {
 	idled := Idle - PrevIdle
 
 	cpu := 100 * float64(totald-idled) / float64(totald)
-	puser, pnice, psystem, pidle, pio, pirq, psoftirq, psteal, _, pguestNice = user, nice, system, idle, io, irq, softirq, steal, guest, guest_nice
+	puser, pnice, psystem, pidle, pio, pirq, psoftirq, psteal, _, _ = user, nice, system, idle, io, irq, softirq, steal, guest, guest_nice
 	return cpu
 }
 

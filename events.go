@@ -19,7 +19,10 @@ func RunClickEventsHandler() {
 		if json.Valid(b) {
 			json.Unmarshal(b, ce)
 		} else {
-			json.Unmarshal(b[1:], ce)
+			if err := json.Unmarshal(b[1:], ce); err != nil {
+				// skip, cant do nothing with
+				continue
+			}
 		}
 		//not strange stdin
 		if len(ce.Name) > 0 {
