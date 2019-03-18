@@ -18,8 +18,8 @@ const (
 	cloudIcon           = "\uf0c2"
 	thunderIcon         = ""
 
-	smogIcon            = "\uf75f"
-	celsiusIcon         = "\u00B0" //"\u2103"
+	smogIcon    = "\uf75f"
+	celsiusIcon = "\u00B0" //"\u2103"
 )
 
 var (
