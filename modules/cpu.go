@@ -11,7 +11,7 @@ import (
 var (
 	s string
 	//those ints need to store previous values of cpu time
-	puser, pnice, psystem, pidle, pio, pirq, psoftirq, psteal, _, _ int
+	puser, pnice, psystem, pidle, pio, pirq, psoftirq, psteal  int
 )
 
 type CPU struct {

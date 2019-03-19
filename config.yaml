@@ -4,20 +4,37 @@ global:
 modules:
 - title:
     interval: 1s
-    prefix: "W: "
-    postfix: 
+    prefix: "(  "
+    postfix: "  )"
     extra:
       maxChars: 64
 - weather:
     interval: 30m
     extra:
       location: auto
+- docker:
+    interval: 5s
+    prefix: " "
+    postfix:
+    extra:
+      # docker version |grep API|tail -n1 |awk '{print $3}'
+      clientAPIVersion: "1.39"
+      color: "#0fd2ee"
+- exec:
+    interval: 5s
+    prefix: "\uf109 "
+    clickEvents:
+      left: urxvt -name __scratchpad -e ping 8.8.8.8
+    extra:
+      #only pipes allowed, use tee to redirect output if needed
+      cmd: 'cat /proc/loadavg | awk ''{print $1}'' '
+      color: "#e2c96e"
 - cpu:
     interval: 2s500ms
     prefix: "\uf2db"
     postfix: 
     colors:
-      good: "#75c55c"
+      good: "#66b266"
       warn: "#e2c96e"
       crit: "#7f0909"
     levels:
@@ -35,28 +52,21 @@ modules:
     interval: 5s
     prefix: " "
     colors:
-      good: "#75c55c"
+      good: "#66b266"
       warn: "#e2c96e"
       crit: "#7f0909"
     levels:
       good: 0-50
       warn: 51-75
       crit: 75-100
-- exec:
-    interval: 5s
-    prefix: "\uf109 "
-    clickEvents:
-      left: urxvt -name __scratchpad -e ping 8.8.8.8
     extra:
-      #only pipes allowed, use tee to redirect output if needed
-      cmd: 'cat /proc/loadavg | awk ''{print $1}'' '
-      color: "#e2c96e"
+      format: '{{printf "%.1f" $used}}/{{printf "%.1f" $total}} ({{printf "%.0f" $percentage}}%)'
 - hdd:
     interval: 10s
-    prefix: " " 
-    postfix:
+    prefix: "\uf120 " 
+    postfix: " Gb"
     colors:
-      good: "#75c55c"
+      good: "#66b266"
       warn: "#e2c96e"
       crit: "#7f0909"
     levels:
@@ -68,7 +78,28 @@ modules:
     extra:
       mountPoint: /
       # $avail, $path, $percentage  also available as float64
-      format: '{{printf "%.1f" $used}}/{{printf "%.1f" $total}} ({{printf "%.0f" $percentage}}%)'
+      #format: '{{printf "%.1f" $used}}/{{printf "%.1f" $total}} ({{printf "%.0f" $percentage}}%)'
+      format: '{{printf "%.1f" $avail}}'
+- hdd:
+    interval: 10s
+    prefix: " " 
+    postfix: " Gb"
+    colors:
+      good: "#66b266"
+      warn: "#e2c96e"
+      crit: "#7f0909"
+    levels:
+      good: 0-60
+      warn: 61-80
+      crit: 81-100
+    clickEvents:
+      left: thunar
+    extra:
+      mountPoint: /home/mhd/share
+      # $avail, $path, $percentage  also available as float64
+      #format: '{{printf "%.1f" $used}}/{{printf "%.1f" $total}} ({{printf "%.0f" $percentage}}%)'
+      format: '{{printf "%.1f" $avail}}'
+
 - exec:
     interval: 5s
     prefix: "\uf027 "
@@ -81,8 +112,8 @@ modules:
       cmd: pamixer --get-volume
       color: "#e2c96e"
 - time:
-    interval: 5s
-    prefix: "\uf133 "
+    interval: 1s
+    prefix: "\uf274 "
     extra:
       format: 02/01 15:04
      
