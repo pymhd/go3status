@@ -13,7 +13,7 @@ import (
 const (
 	OpenWeatherMapToken = "af7bfe22287c652d032a3064ffa44088"
 	snowIcon            = "\uf2dc"
-	rainIcon            = "\uf740"
+	rainIcon            =  "\uf73d" // "\uf740"
 	sunIcon             = "\uf185"
 	cloudIcon           = "\uf0c2"
 	thunderIcon         = ""
