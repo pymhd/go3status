@@ -4,7 +4,8 @@ import (
         "fmt"
         "time"
         "strconv"
-
+        "sync/atomic"
+        
         "context"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
@@ -36,7 +37,28 @@ func (dc DockerClient) Run(c chan ModuleOutput, cfg ModuleConfig) {
 }
 
 func (dc DockerClient) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
+        switch ce.Button {
+        // middle, reserved, shrink panel and force refresh
+        case 2:
+                dc.Mute(cfg.Id)
+                RefreshChans[cfg.Id] <- true
+        // any other
+        default:
+                buttonNumber := ce.Button
+                buttonText := clickMap[buttonNumber]
+                cmd, ok := cfg.ClickEvents[buttonText]
+                if !ok {
+                        //if no cmd specified in config file
+                        break
+                }
+                execute(cmd)
+                RefreshChans[cfg.Id] <- true
 
+        }        
+}
+
+func (dc DockerClient) Mute(id int) {
+        atomic.StoreInt32(Mute[id], ^atomic.LoadInt32(Mute[id]))
 }
 
 func (dc DockerClient) run(c chan ModuleOutput, cfg ModuleConfig) {
@@ -59,16 +81,24 @@ func (dc DockerClient) run(c chan ModuleOutput, cfg ModuleConfig) {
                 c <- output
                 return
         }
-        count, err := getDockerCount(version)
-        if err != nil {
-                output.FullText += "Daemon OFF"
-        } else {
-                output.FullText = fmt.Sprintf("%s %d", output.FullText, count) 
-        }
+        
         color, ok := cfg.Extra["color"]
         if ok {
                 output.Color, _ = color.(string)
         }
+        
+        if x := atomic.LoadInt32(Mute[cfg.Id]); x == -1 {
+                output.FullText += " ..." + cfg.Postfix
+        } else {
+                count, err := getDockerCount(version)
+                if err != nil {
+                        output.FullText += "Daemon OFF"
+                } else {
+                        output.FullText = fmt.Sprintf("%s %d", output.FullText, count) 
+                }
+
+        }
+
         c <- output
 }
 
