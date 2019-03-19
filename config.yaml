@@ -1,6 +1,6 @@
 global:
-  interval: 1s
-  color: regular
+  interval: 1s #deprecated
+  color: regular #deprecated
 modules:
 - title:
     interval: 1s
@@ -19,7 +19,7 @@ modules:
     extra:
       # docker version |grep API|tail -n1 |awk '{print $3}'
       clientAPIVersion: "1.39"
-      color: "#0fd2ee"
+      color: "#1bbbd2"
 - exec:
     interval: 5s
     prefix: "\uf109 "
@@ -116,6 +116,9 @@ modules:
     prefix: "\uf274 "
     extra:
       format: 02/01 15:04
+    clickEvents:
+      left: 'xdg-open "https://calendar.google.com"'
+      right: 'xdg-open "https://calendar.google.com"'
      
 #  vpn:
 #    interval: 5s
