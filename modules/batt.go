@@ -51,7 +51,7 @@ func (batt BAT) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
 }
 
 func getBatPercent () float64 {
-	var full, now float64
+	var full, now int
 
 	data, _ := os.Open("/sys/class/power_supply/BAT0/energy_full")
 	fmt.Fscanf(data, "%d", &full)
@@ -60,7 +60,7 @@ func getBatPercent () float64 {
 	fmt.Fscanf(data, "%d", &now)
 
 	res := 100 * now / full
-	return res
+	return float64(res)
 }
 
 func init() {
