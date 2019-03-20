@@ -2,6 +2,7 @@ package modules
 
 import (
 	"github.com/mdirkse/i3ipc"
+	"unicode/utf8"
 	"strconv"
 	"sync/atomic"
 	"time"
@@ -78,7 +79,7 @@ func (t Title) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
 			//if no cmd specified in config file
 			break
 		}
-		execute(cmd)
+		execute(cmd, time.Duration(500 * time.Millisecond))
 		RefreshChans[cfg.Id] <- true
 
 	}
@@ -92,10 +93,11 @@ func getFocusedTitle(max int) string {
 	node, _ := i3socket.GetTree()
 	focused := node.FindFocused()
 	name := focused.Window_Properties.Title
-	if max == 0 || len(name) <= max {
-		return name
+	length := utf8.RuneCountInString(name)
+	if max == 0 || length <= max {
+		return name[:length]
 	}
-	return name[:max]
+	return name[:]
 
 }
 

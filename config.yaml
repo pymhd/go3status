@@ -8,10 +8,31 @@ modules:
     postfix: "  )"
     extra:
       maxChars: 64
+- exec:
+    interval: 3h
+    prefix: "\uf155 "
+    extra:
+      cmd: 'USD=`curl -Ss  https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml |grep USD |awk -F= ''{print $NF}''| grep -Po ''(\d*\.\d{3})''` ; EUR=`curl -Ss  https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml |grep RUB|awk -F= ''{print $NF}''| grep -Po ''(\d*\.\d{1})''`; echo $EUR/$USD| bc -l|grep  -Po ''(\d*\.\d{1})'' '
+      color: "#bf3e3e"
+      timeout: 10s
+- exec:
+    interval: 3h
+    prefix: "\uf153 " 
+    extra:
+      cmd: 'curl -Ss  https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml |grep RUB|awk -F= ''{print $NF}''| grep -Po ''(\d*\.\d{1})'' ' 
+      color: "#bf3e3e"
+      timeout: 2s
 - weather:
     interval: 30m
     extra:
       location: auto
+- exec:
+    prefix: "\uf188 "
+    interval: 3h
+    extra:
+      cmd: 'P=`checkupdates|wc -l`; Y=`yay -Qua|wc -l`; echo "$P/$Y"'
+      color: "#e2c96e"
+      timeout: 30s
 - docker:
     interval: 5s
     prefix: " "

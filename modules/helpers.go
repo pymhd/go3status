@@ -33,7 +33,7 @@ func inRange(p float64, r string) bool {
 
 }
 
-func execute(oneliner string) string {
+func execute(oneliner string, timeout time.Duration) string {
 	if len(oneliner) == 0 {
 		return "Wrong cmd"
 	}
@@ -50,7 +50,7 @@ func execute(oneliner string) string {
 	select {
 	case result := <-res:
 		return result
-	case <-time.After(500 * time.Millisecond):
+	case <-time.After(timeout):
 		return ""
 	}
 }

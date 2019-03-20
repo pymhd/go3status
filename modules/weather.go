@@ -128,7 +128,7 @@ func (w Weather) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
 			//if no cmd specified in config file
 			break
 		}
-		execute(cmd)
+		execute(cmd, time.Duration(500 * time.Millisecond))
 		RefreshChans[cfg.Id] <- true
 
 	}
