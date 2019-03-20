@@ -54,15 +54,14 @@ modules:
     interval: 10s
     prefix: "BAT: "
     postfix: "%"
-    postfix: 
     colors:
       good: "#66b266"
       warn: "#e2c96e"
       crit: "#7f0909"
     levels:
-      good: 0-50
-      warn: 51-75
-      crit: 75-100
+      good: 50-100
+      warn: 20-50
+      crit: 0-20
 
 - cpu:
     interval: 2s500ms
