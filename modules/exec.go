@@ -59,10 +59,22 @@ func (e Exec) run(c chan ModuleOutput, cfg ModuleConfig) {
 			output.Color = c
 		}
 	}
+	timeout := time.Duration(500 * time.Millisecond)
+	tmt, ok := cfg.Extra["timeout"] 
+	if ok {
+		ts, ok := tmt.(string)
+		if ok { 
+			t, err := time.ParseDuration(ts)
+			if err == nil {
+				timeout = t
+			}
+		}
+	}
+	
 	if x := atomic.LoadInt32(Mute[cfg.Id]); x == -1 {
 		output.FullText += "..." + cfg.Postfix
 	} else {
-		output.FullText += execute(cmd) + cfg.Postfix
+		output.FullText += execute(cmd, timeout) + cfg.Postfix
 	}
 
 	c <- output
@@ -83,7 +95,7 @@ func (e Exec) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
 			//if no cmd specified in config file
 			break
 		}
-		execute(cmd)
+		execute(cmd, time.Duration(500 * time.Millisecond))
 		RefreshChans[cfg.Id] <- true
 
 	}
