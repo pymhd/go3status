@@ -50,6 +50,20 @@ modules:
       #only pipes allowed, use tee to redirect output if needed
       cmd: 'cat /proc/loadavg | awk ''{print $1}'' '
       color: "#e2c96e"
+- batt:
+    interval: 10s
+    prefix: "BAT: "
+    postfix: "%"
+    postfix: 
+    colors:
+      good: "#66b266"
+      warn: "#e2c96e"
+      crit: "#7f0909"
+    levels:
+      good: 0-50
+      warn: 51-75
+      crit: 75-100
+
 - cpu:
     interval: 2s500ms
     prefix: "\uf2db"

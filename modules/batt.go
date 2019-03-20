@@ -1,35 +1,69 @@
-package batt
+package modules
 
 import (
 	"fmt"
 	"os"
+        "time"
 )
 
 type BAT struct {
 	name string
 }
 
-func (batt BAT) run() {
-	output.Name = batt.name
-
-	persentage := getBatPercent(batt.name)
-	
+func (batt BAT) Name() string {
+        return batt.name
 }
 
-func getBatPercent (Name) int {
-	var full, now, res int
+func (batt BAT) Run(c chan ModuleOutput, cfg ModuleConfig) {
+        //to run by start
+        batt.run(c, cfg)
 
-	data, _ := os.Open("/sys/class/power_supply/" + Name + "/energy_full")
+        // to run periodically
+        ticker := time.NewTicker(cfg.Interval)
+        for {
+                select {
+                case <-ticker.C:
+                        batt.run(c, cfg)
+                case <-RefreshChans[cfg.Id]:
+                        batt.run(c, cfg)
+                }
+        }
+}
+
+func (batt BAT) run(c chan ModuleOutput, cfg ModuleConfig) {
+        output := ModuleOutput{}
+	output.Name = batt.name
+        output.Markup = "pango"
+        output.Refresh = true
+        output.FullText = cfg.Prefix
+
+	percentage := getBatPercent()
+        for lvl, val := range cfg.Levels {
+		if inRange(percentage, val) {
+			output.Color = cfg.Colors[lvl]
+                }
+	}
+        output.FullText += fmt.Sprintf("%.2f%s", percentage, cfg.Postfix)
+        c <- output
+}
+
+func (batt BAT) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
+}
+
+func getBatPercent () float64 {
+	var full, now float64
+
+	data, _ := os.Open("/sys/class/power_supply/BAT0/energy_full")
 	fmt.Fscanf(data, "%d", &full)
 
-	data, _ = os.Open("/sys/class/power_supply/" + Name + "/energy_now")
+	data, _ = os.Open("/sys/class/power_supply/BAT0/energy_now")
 	fmt.Fscanf(data, "%d", &now)
 
-	res = 100 * now / full
+	res := 100 * now / full
 	return res
 }
 
 func init() {
-	batt := BAT{name: "BAT0"}
+	batt := BAT{name: "batt"}
 	selfRegister(batt)
 }
