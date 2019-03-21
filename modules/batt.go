@@ -37,21 +37,22 @@ func (batt BAT) run(c chan ModuleOutput, cfg ModuleConfig) {
         output.Refresh = true
         output.FullText = cfg.Prefix
 
-	percentage := getBatPercent()
+	percentage, capacity := getBatPercent()
         for lvl, val := range cfg.Levels {
 		if inRange(percentage, val) {
 			output.Color = cfg.Colors[lvl]
                 }
 	}
-        output.FullText += fmt.Sprintf("%.2f%s", percentage, cfg.Postfix)
+        tu, _ := time.ParseDuration(capacity)
+        output.FullText += fmt.Sprintf("%.2f%s %.0fh:%.0fm", percentage, cfg.Postfix, tu.Hours(), tu.Minutes())
         c <- output
 }
 
 func (batt BAT) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
 }
 
-func getBatPercent () float64 {
-	var full, now int
+func getBatPercent () (float64, string) {
+	var full, now, power int
 
 	data, _ := os.Open("/sys/class/power_supply/BAT0/energy_full")
 	fmt.Fscanf(data, "%d", &full)
@@ -59,8 +60,16 @@ func getBatPercent () float64 {
 	data, _ = os.Open("/sys/class/power_supply/BAT0/energy_now")
 	fmt.Fscanf(data, "%d", &now)
 
+        data, _ = os.Open("/sys/class/power_supply/BAT0/power_now")
+        fmt.Fscanf(data, "%d", &power)
+        power = 12312123
+
 	res := 100 * now / full
-	return float64(res)
+        percent := float64(res)
+
+        resf := float64(now) / float64(power)
+        capacity := fmt.Sprintf("%.4fh", resf)
+	return percent, capacity
 }
 
 func init() {
