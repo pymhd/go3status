@@ -43,13 +43,23 @@ func (batt BAT) run(c chan ModuleOutput, cfg ModuleConfig) {
 			output.Color = cfg.Colors[lvl]
                 }
 	}
-        tu, _ := time.ParseDuration(capacity)
-        output.FullText += fmt.Sprintf("%.2f%s %.0fh:%.0fm", percentage, cfg.Postfix, tu.Hours(), tu.Minutes())
+        duration, _ := time.ParseDuration(capacity)
+        tu := fmtDuration(duration)
+        output.FullText += fmt.Sprintf("%.2f%s %s", percentage, cfg.Postfix, tu)
         c <- output
 }
 
 func (batt BAT) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
 }
+
+func fmtDuration(d time.Duration) string {
+    d = d.Round(time.Minute)
+    h := d / time.Hour
+    d -= h * time.Hour
+    m := d / time.Minute
+    return fmt.Sprintf("%02dh %02dm", h, m)
+}
+
 
 func getBatPercent () (float64, string) {
 	var full, now, power int
