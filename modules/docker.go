@@ -107,7 +107,7 @@ func getDockerCount(v string) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-
+	defer cli.Close()
 	containers, err := cli.ContainerList(context.Background(), types.ContainerListOptions{})
 	if err != nil {
 		return 0, err

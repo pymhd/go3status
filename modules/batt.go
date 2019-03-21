@@ -62,7 +62,6 @@ func getBatPercent () (float64, string) {
 
         data, _ = os.Open("/sys/class/power_supply/BAT0/power_now")
         fmt.Fscanf(data, "%d", &power)
-        power = 12312123
 
 	res := 100 * now / full
         percent := float64(res)
