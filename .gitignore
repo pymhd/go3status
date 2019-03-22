@@ -25,3 +25,6 @@ config_test.yaml
 
 .idea
 go3status_race
+
+#tmp
+tmp
