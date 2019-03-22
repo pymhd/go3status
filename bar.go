@@ -76,12 +76,15 @@ func NewStatusLine() *StatusLine {
 		for name, mcfg := range moduleCm {
 			upd := make(chan modules.ModuleOutput)
 			rfsh := make(chan bool)
+			//used later as Instance attr in module output to distinct same modules
+			mcfg.Id = n
 			
 			m := modules.Module{}
 			m.Name = name
 			m.Update = upd
 			m.Refresh = rfsh
 			m.Cfg = mcfg
+			
 			sl.Modules[n] = m
 		}
 	}

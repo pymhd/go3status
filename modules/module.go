@@ -2,7 +2,7 @@ package modules
 
 import (
         "time"
-        "strconv"        
+        "strconv"
 )
 
 type Module struct {
@@ -80,8 +80,13 @@ func(m *Module) muteOutput(mo *ModuleOutput) {
         mo.FullText += "..."
 }
 
+func(m *Module) flushOutput(mo *ModuleOutput) {
+        mo.FullText = m.Cfg.Prefix
+}
+
 func(m *Module) sendOutput(mo *ModuleOutput) {
         m.Update <- *mo
+        m.flushOutput(mo)
 }
 
 func(m *Module) refresh() {

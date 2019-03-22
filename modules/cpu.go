@@ -1,7 +1,7 @@
 package modules
 
 func cpu(mo *ModuleOutput, cfg ModuleConfig) {
-        mo.FullText = "70%"
+        mo.FullText += "70%"
 }
 
 func init() {
