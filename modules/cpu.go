@@ -46,9 +46,11 @@ func cpu(mo *ModuleOutput, cfg ModuleConfig) {
 	cpu := 100 * float64(totald-idled) / float64(totald)
 
 	cache.Add(cpuTimeKey, newCpuTime, "1h")
-
+	//Generate output
+	mo.Color = getColor(cpu, cfg)
 	mo.FullText = fmt.Sprintf(" %.2f%%", cpu)
 }
+
 
 func init() {
 	RegisteredFuncs["cpu"] = cpu
