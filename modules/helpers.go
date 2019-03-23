@@ -1,12 +1,12 @@
 package modules
 
 import (
-	"bytes"
 	"fmt"
-	"os/exec"
+	"time"
+	"bytes"
 	"strconv"
 	"strings"
-	"time"
+	"os/exec"
 )
 
 var (
