@@ -40,4 +40,3 @@ type ClickEvent struct {
 	Y        int      `json:"y"`
 	Mod      []string `json:"modifiers"`
 }
-

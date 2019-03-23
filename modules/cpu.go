@@ -1,8 +1,8 @@
 package modules
 
 import (
-	"os"
 	"fmt"
+	"os"
 )
 
 const (
@@ -20,7 +20,7 @@ func cpu(mo *ModuleOutput, cfg ModuleConfig) {
 	prevCpuTime := cpuTime{}
 	newCpuTime := cpuTime{}
 	var tmp string
-	
+
 	//Get prev cpu times
 	cv := cache.Get(cpuTimeKey)
 	if cv != nil {
@@ -46,7 +46,7 @@ func cpu(mo *ModuleOutput, cfg ModuleConfig) {
 	cpu := 100 * float64(totald-idled) / float64(totald)
 
 	cache.Add(cpuTimeKey, newCpuTime, "1h")
-	
+
 	mo.FullText = fmt.Sprintf(" %.2f%%", cpu)
 }
 

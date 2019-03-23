@@ -13,7 +13,7 @@ type StatusLine struct {
 	sync.Mutex
 	Header  string
 	Refresh chan bool
-	Modules []modules.Module
+	Modules []*modules.Module
 	Blocks  []modules.ModuleOutput
 	cases   []reflect.SelectCase
 }
@@ -71,7 +71,7 @@ func NewStatusLine() *StatusLine {
 	sl := new(StatusLine)
 	sl.Header = `{"version": 1, "click_events": true, "stop_signal": 20}`
 
-	sl.Modules = make([]modules.Module, len(cfg.Modules))
+	sl.Modules = make([]*modules.Module, len(cfg.Modules))
 	for n, moduleCm := range cfg.Modules {
 		for name, mcfg := range moduleCm {
 			upd := make(chan modules.ModuleOutput)
@@ -79,7 +79,7 @@ func NewStatusLine() *StatusLine {
 			//used later as Instance attr in module output to distinct same modules
 			mcfg.Id = n
 			
-			m := modules.Module{}
+			m := new(modules.Module)
 			m.Name = name
 			m.Update = upd
 			m.Refresh = rfsh
