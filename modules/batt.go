@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"os"
         "time"
+	"bufio"
+	"regexp"
+	"strconv"
 )
 
 type BAT struct {
@@ -37,48 +40,69 @@ func (batt BAT) run(c chan ModuleOutput, cfg ModuleConfig) {
         output.Refresh = true
         output.FullText = cfg.Prefix
 
-	percentage, capacity := getBatPercent()
+	percentage, capacity, status := getBatPercent()
         for lvl, val := range cfg.Levels {
 		if inRange(percentage, val) {
 			output.Color = cfg.Colors[lvl]
                 }
 	}
         duration, _ := time.ParseDuration(capacity)
-        tu := fmtDuration(duration)
-        output.FullText += fmt.Sprintf("%.2f%s %s", percentage, cfg.Postfix, tu)
+        hours, minutes := fmtDuration(duration)
+	output.FullText += fmt.Sprintf("%.0f%% %s %dh %dm", percentage, status, hours, minutes)
         c <- output
 }
 
 func (batt BAT) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
 }
 
-func fmtDuration(d time.Duration) string {
+func fmtDuration(d time.Duration) (time.Duration, time.Duration) {
     d = d.Round(time.Minute)
     h := d / time.Hour
     d -= h * time.Hour
     m := d / time.Minute
-    return fmt.Sprintf("%02dh %02dm", h, m)
+    return h, m /*fmt.Sprintf("%02dh %02dm", h, m) */
 }
 
 
-func getBatPercent () (float64, string) {
-	var full, now, power int
+func getBatPercent () (float64, string, string) {
+        var b_status, capacity string
+	var e_full, e_now, p_now int
+	var percent float64
 
-	data, _ := os.Open("/sys/class/power_supply/BAT0/energy_full")
-	fmt.Fscanf(data, "%d", &full)
+	re := regexp.MustCompile(`(^.*)=(.*$)`)
+	file, _ := os.Open("/sys/class/power_supply/BAT0/uevent")
+	defer file.Close()
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
+		match := re.FindStringSubmatch(line)
+		if match != nil {
+			switch match[1] {
+			case "POWER_SUPPLY_STATUS":
+				b_status = match[2]
+			case "POWER_SUPPLY_POWER_NOW":
+				p_now, _ = strconv.Atoi(match[2])
+			case "POWER_SUPPLY_ENERGY_NOW":
+				e_now, _ = strconv.Atoi(match[2])
+			case "POWER_SUPPLY_ENERGY_FULL":
+				e_full, _ = strconv.Atoi(match[2])
+			}
+		}
+	}
 
-	data, _ = os.Open("/sys/class/power_supply/BAT0/energy_now")
-	fmt.Fscanf(data, "%d", &now)
+	percent = float64(100 * e_now / e_full)
+	switch b_status {
+	case "Discharging":
+		c := float64(e_now) / float64(p_now)
+		capacity = fmt.Sprintf("%.7fh", c)
+		b_status = "DIS"
+	case "Charging":
+		c := (float64(e_full) - float64(e_now)) / float64(p_now)
+		capacity = fmt.Sprintf("%.7fh", c)
+		b_status = "CHR"
+	}
 
-        data, _ = os.Open("/sys/class/power_supply/BAT0/power_now")
-        fmt.Fscanf(data, "%d", &power)
-
-	res := 100 * now / full
-        percent := float64(res)
-
-        resf := float64(now) / float64(power)
-        capacity := fmt.Sprintf("%.4fh", resf)
-	return percent, capacity
+	return percent, capacity, b_status
 }
 
 func init() {
