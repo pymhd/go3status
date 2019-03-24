@@ -48,7 +48,7 @@ func (batt BAT) run(c chan ModuleOutput, cfg ModuleConfig) {
 	}
         duration, _ := time.ParseDuration(capacity)
         hours, minutes := fmtDuration(duration)
-	output.FullText += fmt.Sprintf("%.0f%% %s %dh %dm", percentage, status, hours, minutes)
+	output.FullText += fmt.Sprintf("%.0f%% %s(%dh%dm)", percentage, status, hours, minutes)
         c <- output
 }
 
