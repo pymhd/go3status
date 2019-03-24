@@ -21,7 +21,7 @@ func main() {
 	//Run is main handler that updates receives updates from modules and pushes them to internal blocks slice.
 	go s.Run()
 	//This is stdin scanner for JSON formatted click events
-	//go RunClickEventsHandler()
+	go RunClickEventsHandler(s)
 	//This is method that prints internal blocks slice to stdout for i3bar
 	s.Render()
 }
