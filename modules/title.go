@@ -95,9 +95,9 @@ func getFocusedTitle(max int) string {
 	name := focused.Window_Properties.Title
 	length := utf8.RuneCountInString(name)
 	if max == 0 || length <= max {
-		return name[:length]
+		return name[:]
 	}
-	return name[:]
+	return name[:max]
 
 }
 
