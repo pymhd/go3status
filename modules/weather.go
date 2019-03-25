@@ -44,10 +44,6 @@ type weather struct {
         } `json:"wind"`
 }
 
-type Weather struct {
-        name string
-}
-
 
 func getWeatherModule(mo *ModuleOutput, cfg ModuleConfig) {
 	var loc location
@@ -71,6 +67,10 @@ func getWeatherModule(mo *ModuleOutput, cfg ModuleConfig) {
 		cache.Add(weatherCacheKey, loc, "24h")
 	}
 	wf := getWeather(loc)
+	if wf == nil {
+		mo.FullText += "N/A"
+		return 
+	}
 	icon, ok := iconSet[wf.Weather[0].Main]
 	if !ok {
 		icon = smogIcon
@@ -104,11 +104,11 @@ func getWeather(l location) *weather {
 	}
 	res, err := http.Get(url)
 	if err != nil {
-		return w
+		return nil
 	}
 	defer res.Body.Close()
 	if err := json.NewDecoder(res.Body).Decode(w); err != nil {
-		return w
+		return nil
 	}
 	return w
 
