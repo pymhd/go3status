@@ -1,15 +1,14 @@
 package main
 
 import (
+        "os"
 	"bufio"
-	"encoding/json"
-	_ "fmt"
-	"go3status/modules"
-	"os"
 	"strconv"
+	"encoding/json"
+	"go3status/modules"
 )
 
-func RunClickEventsHandler() {
+func RunClickEventsHandler(sl *StatusLine) {
 	scanner := bufio.NewScanner(os.Stdin)
 	//cache := make(map[string]int)
 	for scanner.Scan() {
@@ -26,23 +25,8 @@ func RunClickEventsHandler() {
 		}
 		//not strange stdin
 		if len(ce.Name) > 0 {
-			name := ce.Name
-			instance := ce.Instance
-			//cached_n, ok := cache[name]
-			//if ok {
-			//	mc := cfg.Modules[cached_n][name]
-			//	mc.Id = cached_n
-			//	modules.Modules[cached_n].HandleClickEvent(ce, mc)
-			//	continue
-			//}
-			for n := range cfg.Modules {
-				if strconv.Itoa(n) == instance {
-					//cache[name] = n
-					mc := cfg.Modules[n][name]
-					mc.Id = n
-					modules.Modules[n].HandleClickEvent(ce, mc)
-				}
-			}
+			id, _ := strconv.Atoi(ce.Instance)
+			go sl.Modules[id].HandleClickEvent(ce)
 		}
 	}
 }

@@ -1,0 +1,12 @@
+package modules
+
+import (
+
+)
+
+func FUNCNAME(mo *ModuleOutput, cfg ModuleConfig) {
+}
+
+func init() {
+	RegisteredFuncs["NAME"] = FUNCNAME
+}
