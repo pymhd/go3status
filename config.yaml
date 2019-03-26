@@ -2,12 +2,12 @@ global:
   interval: 1s #deprecated
   color: regular #deprecated
 modules:
-- title:
-    interval: 1s
-    prefix: "(  "
-    postfix: "  )"
-    extra:
-      maxChars: 64
+        #- title:
+        #    interval: 1s
+        #    prefix: "(  "
+        #    postfix: "  )"
+        #    extra:
+        #      maxChars: 64
 - exec:
     interval: 3h
     prefix: "\uf155 "
@@ -25,22 +25,22 @@ modules:
 - weather:
     interval: 30m
     extra:
-      location: auto
-- exec:
-    prefix: "\uf188 "
-    interval: 3h
-    extra:
-      cmd: 'P=`checkupdates|wc -l`; Y=`yay -Qua|wc -l`; echo "$P/$Y"'
-      color: "#e2c96e"
-      timeout: 30s
-- docker:
-    interval: 5s
-    prefix: " "
-    postfix:
-    extra:
-      # docker version |grep API|tail -n1 |awk '{print $3}'
-      clientAPIVersion: "1.39"
-      color: "#1bbbd2"
+      location: Moscow
+      #- exec:
+      #    prefix: "\uf188 "
+      #    interval: 3h
+      #    extra:
+      #      cmd: 'P=`checkupdates|wc -l`; Y=`yay -Qua|wc -l`; echo "$P/$Y"'
+      #      color: "#e2c96e"
+      #      timeout: 30s
+      #- docker:
+      #    interval: 5s
+      #    prefix: " "
+      #    postfix:
+      #    extra:
+      #      # docker version |grep API|tail -n1 |awk '{print $3}'
+      #      clientAPIVersion: "1.39"
+      #      color: "#1bbbd2"
 - exec:
     interval: 5s
     prefix: "\uf109 "
@@ -50,19 +50,6 @@ modules:
       #only pipes allowed, use tee to redirect output if needed
       cmd: 'cat /proc/loadavg | awk ''{print $1}'' '
       color: "#e2c96e"
-- batt:
-    interval: 10s
-    prefix: "BAT: "
-    postfix: "%"
-    colors:
-      good: "#66b266"
-      warn: "#e2c96e"
-      crit: "#7f0909"
-    levels:
-      good: 50-100
-      warn: 20-50
-      crit: 0-20
-
 - cpu:
     interval: 2s500ms
     prefix: "\uf2db"
@@ -82,8 +69,9 @@ modules:
       wheelDown: urxvt -name __scratchpad -e htop
     extra:
       key: value  
+
 - memory:
-    interval: 5s
+    interval: 10s
     prefix: " "
     colors:
       good: "#66b266"
@@ -95,47 +83,61 @@ modules:
       crit: 75-100
     extra:
       format: '{{printf "%.1f" $used}}/{{printf "%.1f" $total}} ({{printf "%.0f" $percentage}}%)'
-- hdd:
-    interval: 10s
-    prefix: "\uf120 " 
-    postfix: " Gb"
+- batt:
+    interval: 5s
+    prefix: "\uf240 "
+    postfix: "%"
     colors:
       good: "#66b266"
       warn: "#e2c96e"
       crit: "#7f0909"
     levels:
-      good: 0-60
-      warn: 61-80
-      crit: 81-100
-    clickEvents:
-      left: thunar
-    extra:
-      mountPoint: /
-      # $avail, $path, $percentage  also available as float64
-      #format: '{{printf "%.1f" $used}}/{{printf "%.1f" $total}} ({{printf "%.0f" $percentage}}%)'
-      format: '{{printf "%.1f" $avail}}'
-- hdd:
-    interval: 10s
-    prefix: " " 
-    postfix: " Gb"
-    colors:
-      good: "#66b266"
-      warn: "#e2c96e"
-      crit: "#7f0909"
-    levels:
-      good: 0-60
-      warn: 61-80
-      crit: 81-100
-    clickEvents:
-      left: thunar
-    extra:
-      mountPoint: /home/mhd/share
-      # $avail, $path, $percentage  also available as float64
-      #format: '{{printf "%.1f" $used}}/{{printf "%.1f" $total}} ({{printf "%.0f" $percentage}}%)'
-      format: '{{printf "%.1f" $avail}}'
+      good: 50-100
+      warn: 20-50
+      crit: 0-20
+
+
+      #- hdd:
+      #    interval: 10s
+      #    prefix: "\uf120 " 
+      #    postfix: " Gb"
+      #    colors:
+      #      good: "#66b266"
+      #      warn: "#e2c96e"
+      #      crit: "#7f0909"
+      #    levels:
+      #      good: 0-60
+      #      warn: 61-80
+      #      crit: 81-100
+      #    clickEvents:
+      #      left: thunar
+      #    extra:
+      #      mountPoint: /
+      #      # $avail, $path, $percentage  also available as float64
+      #      #format: '{{printf "%.1f" $used}}/{{printf "%.1f" $total}} ({{printf "%.0f" $percentage}}%)'
+      #      format: '{{printf "%.1f" $avail}}'
+      #- hdd:
+      #    interval: 10s
+      #    prefix: " " 
+      #    postfix: " Gb"
+      #    colors:
+      #      good: "#66b266"
+      #      warn: "#e2c96e"
+      #      crit: "#7f0909"
+      #    levels:
+      #      good: 0-60
+      #      warn: 61-80
+      #      crit: 81-100
+      #    clickEvents:
+      #      left: thunar
+      #    extra:
+      #      mountPoint: /home/mhd/share
+      #      # $avail, $path, $percentage  also available as float64
+      #      #format: '{{printf "%.1f" $used}}/{{printf "%.1f" $total}} ({{printf "%.0f" $percentage}}%)'
+      #      format: '{{printf "%.1f" $avail}}'
 
 - exec:
-    interval: 5s
+    interval: 60s
     prefix: "\uf027 "
     postfix: "%"
     clickEvents:
