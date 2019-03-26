@@ -49,6 +49,8 @@ func getBatPercent () (float64, string, string) {
 				b_status = match[2]
 			case "POWER_SUPPLY_POWER_NOW":
 				p_now, _ = strconv.ParseFloat(match[2], 64)
+			case "POWER_SUPPLY_VOLTAGE_NOW":
+				p_now, _ = strconv.ParseFloat(match[2], 64)
 			case "POWER_SUPPLY_ENERGY_NOW":
 				e_now, _ = strconv.ParseFloat(match[2], 64)
 			case "POWER_SUPPLY_ENERGY_FULL":
