@@ -3,101 +3,39 @@ package modules
 import (
 	"fmt"
 	"os"
-	"strconv"
-	"sync/atomic"
-	"time"
 )
 
-var (
-	s string
-	//those ints need to store previous values of cpu time
-	puser, pnice, psystem, pidle, pio, pirq, psoftirq, psteal  int
+const (
+	cpuTimeKey = "cpu:time"
 )
 
-type CPU struct {
-	name string
+type cpuTime struct {
+	user, nice, system, idle, io, irq, softirq, steal, guest, guest_nice int
 }
 
-func (cpu CPU) Name() string {
-	return cpu.name
-}
-
-func (cpu CPU) Run(c chan ModuleOutput, cfg ModuleConfig) {
-	//to run by start
-	cpu.run(c, cfg)
-
-	// to run periodically
-	ticker := time.NewTicker(cfg.Interval)
-	for {
-		select {
-		case <-ticker.C:
-			cpu.run(c, cfg)
-		case <-RefreshChans[cfg.Id]:
-			cpu.run(c, cfg)
-		}
-	}
-}
-
-func (cpu CPU) run(c chan ModuleOutput, cfg ModuleConfig) {
-	output := ModuleOutput{}
-	output.Name = cpu.name
-	output.Instance = strconv.Itoa(cfg.Id)
-	output.Refresh = true
-	output.Markup = "pango"
-	output.FullText = cfg.Prefix
-
-	percentage := getCpuPercentage()
-	for lvl, val := range cfg.Levels {
-		if inRange(percentage, val) {
-			output.Color = cfg.Colors[lvl]
-		}
-	}
-	if x := atomic.LoadInt32(Mute[cfg.Id]); x == -1 {
-		output.FullText += " ..." + cfg.Postfix
-	} else {
-		output.FullText += fmt.Sprintf(" %.2f%%%s", percentage, cfg.Postfix)
-	}
-	c <- output
-}
-
-func (cpu CPU) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
-	switch ce.Button {
-	// middle, reserved, shrink panel and force refresh
-	case 2:
-		cpu.Mute(cfg.Id)
-		RefreshChans[cfg.Id] <- true
-	// any other
-	default:
-		buttonNumber := ce.Button
-		buttonText := clickMap[buttonNumber]
-		cmd, ok := cfg.ClickEvents[buttonText]
-		if !ok {
-			//if no cmd specified in config file
-			break
-		}
-		execute(cmd, time.Duration(500 * time.Millisecond))
-		RefreshChans[cfg.Id] <- true
-
-	}
-}
-
-func (cpu CPU) Mute(id int) {
-	atomic.StoreInt32(Mute[id], ^atomic.LoadInt32(Mute[id]))
-}
-
-func getCpuPercentage() float64 {
-	var user, nice, system, idle, io, irq, softirq, steal, guest, guest_nice int
-
+func cpu(mo *ModuleOutput, cfg ModuleConfig) {
 	stat, _ := os.Open("/proc/stat")
 	defer stat.Close()
 
-	fmt.Fscanf(stat, "%s %d %d %d %d %d %d %d %d %d %d", &s, &user, &nice, &system, &idle, &io, &irq, &softirq, &steal, &guest, &guest_nice)
+	prevCpuTime := cpuTime{}
+	newCpuTime := cpuTime{}
+	var tmp string
 
-	PrevIdle := pidle + pio
-	Idle := idle + io
+	//Get prev cpu times
+	cv := cache.Get(cpuTimeKey)
+	if cv != nil {
+		//value exist
+		prevCpuTime, _ = cv.(cpuTime)
+	}
 
-	PrevNonIdle := puser + pnice + psystem + pirq + psoftirq + psteal
-	NonIdle := user + nice + system + irq + softirq + steal
+	//get new cpu times
+	fmt.Fscanf(stat, "%s %d %d %d %d %d %d %d %d %d %d", &tmp, &newCpuTime.user, &newCpuTime.nice, &newCpuTime.system, &newCpuTime.idle, &newCpuTime.io, &newCpuTime.irq, &newCpuTime.softirq, &newCpuTime.steal, &newCpuTime.guest, &newCpuTime.guest_nice)
+
+	PrevIdle := prevCpuTime.idle + prevCpuTime.io
+	Idle := newCpuTime.idle + newCpuTime.io
+
+	PrevNonIdle := prevCpuTime.user + prevCpuTime.nice + prevCpuTime.system + prevCpuTime.irq + prevCpuTime.softirq + prevCpuTime.steal
+	NonIdle := newCpuTime.user + newCpuTime.nice + newCpuTime.system + newCpuTime.irq + newCpuTime.softirq + newCpuTime.steal
 
 	PrevTotal := PrevIdle + PrevNonIdle
 	Total := Idle + NonIdle
@@ -106,13 +44,14 @@ func getCpuPercentage() float64 {
 	idled := Idle - PrevIdle
 
 	cpu := 100 * float64(totald-idled) / float64(totald)
-	puser, pnice, psystem, pidle, pio, pirq, psoftirq, psteal, _, _ = user, nice, system, idle, io, irq, softirq, steal, guest, guest_nice
-	return cpu
+
+	cache.Add(cpuTimeKey, newCpuTime, "1h")
+	//Generate output
+	mo.Color = getColor(cpu, cfg)
+	mo.FullText = fmt.Sprintf(" %.2f%%", cpu)
 }
 
-func init() {
-	cpu := CPU{name: "cpu"}
 
-	//register plugin to be avail in modele exported map variable Modules
-	selfRegister(cpu)
+func init() {
+	RegisteredFuncs["cpu"] = cpu
 }

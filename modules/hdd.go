@@ -2,11 +2,8 @@ package modules
 
 import (
 	"bytes"
-	"strconv"
-	"sync/atomic"
 	"syscall"
 	"text/template"
-	"time"
 )
 
 const (
@@ -22,55 +19,18 @@ type filesystem struct {
 	Percentage float64
 }
 
-type HDD struct {
-	name string
-}
-
-func (h HDD) Name() string {
-	return h.name
-}
-
-func (h HDD) Run(c chan ModuleOutput, cfg ModuleConfig) {
-	//to run by start
-	h.run(c, cfg)
-	// to run periodically
-	ticker := time.NewTicker(cfg.Interval)
-	for {
-		select {
-		case <-ticker.C:
-			h.run(c, cfg)
-		case <-RefreshChans[cfg.Id]:
-			h.run(c, cfg)
-		}
-	}
-}
-
-func (h HDD) run(c chan ModuleOutput, cfg ModuleConfig) {
-	output := ModuleOutput{}
-	output.Name = h.name
-	output.Instance = strconv.Itoa(cfg.Id)
-	output.Refresh = true
-	output.Markup = "pango"
-	output.FullText = cfg.Prefix
-
-	mp, ok := cfg.Extra["mountPoint"]
-	if !ok {
-		output.FullText += "N/A"
-		c <- output
-		return
-	}
-	mountPoint, ok := mp.(string)
-	if !ok {
-		output.FullText += "N/A"
-		c <- output
-		return
-	}
-
+func hdd(mo *ModuleOutput, cfg ModuleConfig) {
 	fs := filesystem{}
-	fs.Used, fs.Total = getMpStats(mountPoint)
+	mp, ok := cfg.Extra["mountPoint"]	
+	if !ok {
+		mo.FullText += "N/A"
+		return
+	}
+	fs.Path, _ = mp.(string)
+	fs.Used, fs.Total = getMpStats(fs.Path)
+	fs.Percentage = 100 * fs.Used / fs.Total
 	fs.Avail = fs.Total - fs.Used
-	fs.Path = mountPoint
-	fs.Percentage = fs.Used * 100 / fs.Total
+	//generating fulltext
 	var T string
 	tpl, ok := cfg.Extra["format"]
 	if !ok {
@@ -84,47 +44,13 @@ func (h HDD) run(c chan ModuleOutput, cfg ModuleConfig) {
 	}
 	//to register vars
 	T = TemplatePrefix + T
-	t := template.Must(template.New(mountPoint).Parse(T))
+	t := template.Must(template.New(fs.Path).Parse(T))
 
-	var o bytes.Buffer
-	t.Execute(&o, fs)
-	if x := atomic.LoadInt32(Mute[cfg.Id]); x == -1 {
-		output.FullText += "..." + cfg.Postfix
-	} else {
-		output.FullText += o.String() + cfg.Postfix
-	}
-	for lvl, val := range cfg.Levels {
-		if inRange(fs.Percentage, val) {
-			output.Color = cfg.Colors[lvl]
-		}
-	}
-	c <- output
+	var out bytes.Buffer
+	t.Execute(&out, fs)
 
-}
-
-func (h HDD) HandleClickEvent(ce *ClickEvent, cfg ModuleConfig) {
-	switch ce.Button {
-	// middle, reserved, shrink panel and force refresh
-	case 2:
-		h.Mute(cfg.Id)
-		RefreshChans[cfg.Id] <- true
-	// any other
-	default:
-		buttonNumber := ce.Button
-		buttonText := clickMap[buttonNumber]
-		cmd, ok := cfg.ClickEvents[buttonText]
-		if !ok {
-			//if no cmd specified in config file
-			break
-		}
-		execute(cmd, time.Duration(500 * time.Millisecond))
-		RefreshChans[cfg.Id] <- true
-
-	}
-}
-
-func (h HDD) Mute(id int) {
-	atomic.StoreInt32(Mute[id], ^atomic.LoadInt32(Mute[id]))
+	mo.Color = getColor(fs.Percentage, cfg)
+	mo.FullText += out.String()
 }
 
 func getMpStats(path string) (float64, float64) {
@@ -135,8 +61,7 @@ func getMpStats(path string) (float64, float64) {
 	return (total - avail) / 1024 / 1024 / 1024, total / 1024 / 1024 / 1024
 }
 
-func init() {
-	hdd := HDD{name: "hdd"}
 
-	selfRegister(hdd)
+func init() {
+	RegisteredFuncs["hdd"] = hdd
 }
