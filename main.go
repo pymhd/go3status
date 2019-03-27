@@ -26,7 +26,9 @@ func main() {
 	} else {
 		log = logger.New(handlers.NullHandler{}, logger.ERROR, 0)
 	}
+        log.Info("go3status is starting")
         modules.RegisterLogger(log)
+        
 
 	s := NewStatusLine()
 	//Start will create chans and select cases to handle, and run modules
