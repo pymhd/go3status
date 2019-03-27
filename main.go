@@ -22,9 +22,9 @@ func main() {
 	
 	if len(cfg.Global.LogFile) > 0 {
 		severity := 3 - cfg.Global.LogLevel
-		log = logger.New(handlers.NewFileHandler(cfg.Global.LogFile), severity, logger.OLEVEL|logger.OFILE|logger.OTIME)
+		log = logger.New("main", handlers.NewFileHandler(cfg.Global.LogFile), severity, logger.OLEVEL|logger.OFILE|logger.OTIME)
 	} else {
-		log = logger.New(handlers.NullHandler{}, logger.ERROR, 0)
+		log = logger.New("null", handlers.NullHandler{}, logger.ERROR, 0)
 	}
         log.Info("go3status is starting")
         modules.RegisterLogger(log)
