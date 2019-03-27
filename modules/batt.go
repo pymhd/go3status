@@ -64,11 +64,15 @@ func getBatPercent () (float64, string, string) {
 	case "Discharging":
 		c := e_now / p_now
 		capacity = fmt.Sprintf("%.7fh", c)
-		b_status = "DIS"
+		b_status = "\uf242"
 	case "Charging":
 		c := (e_full - e_now) / p_now
 		capacity = fmt.Sprintf("%.7fh", c)
-		b_status = "CHR"
+		b_status = "\uf1e6"
+	case "Full":
+		c := (e_full - e_now) / p_now
+		capacity = fmt.Sprintf("%.7fh", c)
+		b_status = "\uf240"
 	}
 
 	return percent, capacity, b_status
