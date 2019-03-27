@@ -4,8 +4,8 @@ import (
 	"flag"
 	"go3status/modules"
 	
-	"go-logging"
-	"go-logging/handlers"
+	"github.com/pymhd/go-logging"
+	"github.com/pymhd/go-logging/handlers"
 )
 
 var (

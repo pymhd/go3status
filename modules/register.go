@@ -1,7 +1,7 @@
 package modules
 
 import (
-        "go-logging"
+        "github.com/pymhd/go-logging"
 )
 
 var log  *logger.Logger
