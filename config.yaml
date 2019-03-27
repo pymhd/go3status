@@ -52,7 +52,7 @@ modules:
       color: "#e2c96e"
 - cpu:
     interval: 2s500ms
-    prefix: "\uf2db"
+    prefix: "\uf2db "
     postfix: 
     colors:
       good: "#66b266"
