@@ -19,7 +19,7 @@ func batt(mo *ModuleOutput, cfg ModuleConfig) {
         duration, _ := time.ParseDuration(capacity)
         hours, minutes := fmtDuration(duration)
 	mo.Color = getColor(percentage, cfg)
-	mo.FullText += fmt.Sprintf("%.0f%% %s(%dh%dm)", percentage, status, hours, minutes)
+	mo.FullText += fmt.Sprintf("%s %.0f%%/%dh%dm", status, percentage, hours, minutes)
 }
 
 
@@ -73,6 +73,8 @@ func getBatPercent () (float64, string, string) {
 		c := (e_full - e_now) / p_now
 		capacity = fmt.Sprintf("%.7fh", c)
 		b_status = "\uf240"
+	case "Unknown":
+		b_status = "\uf5df"
 	}
 
 	return percent, capacity, b_status

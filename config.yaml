@@ -85,7 +85,7 @@ modules:
       format: '{{printf "%.1f" $used}}/{{printf "%.1f" $total}} ({{printf "%.0f" $percentage}}%)'
 - batt:
     interval: 5s
-    prefix: "\uf5df "
+    prefix: ""
     postfix: ""
     colors:
       good: "#66b266"
