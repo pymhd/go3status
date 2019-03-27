@@ -14,6 +14,7 @@ type cpuTime struct {
 }
 
 func cpu(mo *ModuleOutput, cfg ModuleConfig) {
+	log.Debug("CPU run")
 	stat, _ := os.Open("/proc/stat")
 	defer stat.Close()
 
