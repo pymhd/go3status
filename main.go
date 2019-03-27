@@ -2,10 +2,15 @@ package main
 
 import (
 	"flag"
+	"go3status/modules"
+	
+	"go-logging"
+	"go-logging/handlers"
 )
 
 var (
 	cfg *Config
+	log *logger.Logger
 )
 
 func main() {
@@ -14,7 +19,15 @@ func main() {
 	flag.Parse()
 	//Parse config file
 	cfg = ParseConfig(*cf)
-
+	
+	if len(cfg.Global.LogFile) > 0 {
+		severity := 3 - cfg.Global.LogLevel
+		log = logger.New(handlers.NewFileHandler(cfg.Global.LogFile), severity, logger.OLEVEL|logger.OFILE|logger.OTIME)
+	} else {
+		log = logger.New(handlers.NullHandler{}, logger.ERROR, 0)
+	}
+        modules.RegisterLogger(log)
+	
 	s := NewStatusLine()
 	//Start will create chans and select cases to handle, and run modules
 	s.Start()
