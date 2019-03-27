@@ -11,7 +11,7 @@ type ModuleConfigMap map[string]modules.ModuleConfig
 type Config struct {
 	Global struct {
 		LogFile     string   `yaml:"logFile"`
-		LogLevel    int      `yaml:"LogLevel"`
+		LogLevel    int      `yaml:"logLevel"`
 	} `yaml:"global"`
 	Modules []ModuleConfigMap `yaml:"modules"`
 }

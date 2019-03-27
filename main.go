@@ -27,7 +27,7 @@ func main() {
 		log = logger.New(handlers.NullHandler{}, logger.ERROR, 0)
 	}
         modules.RegisterLogger(log)
-	
+
 	s := NewStatusLine()
 	//Start will create chans and select cases to handle, and run modules
 	s.Start()
