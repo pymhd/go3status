@@ -24,6 +24,9 @@ func (sl *StatusLine) Start() {
 		f, ok := modules.RegisteredFuncs[module.Name]
 		if ok {
 			go module.Run(f)
+			log.Infof("Module %q started\n", module.Name)
+		} else {
+			log.Errorf("Module %q not found (Check if source code registered)\n", module.Name)
 		}
 	}
 }
@@ -86,6 +89,7 @@ func NewStatusLine() *StatusLine {
 			m.Cfg = mcfg
 			
 			sl.Modules[n] = m
+			log.Infof("Configured module %q with update interval: %s\n", name, mcfg.Interval)
 		}
 	}
 
