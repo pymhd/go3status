@@ -1,17 +1,17 @@
 package modules
 
 import (
-	"fmt"
-        "strings"
-        "net/http"
 	"encoding/json"
+	"fmt"
+	"net/http"
+	"strings"
 )
 
 const (
-	weatherCacheKey = "weather:location"
+	weatherCacheKey     = "weather:location"
 	OpenWeatherMapToken = "af7bfe22287c652d032a3064ffa44088"
 	snowIcon            = "\uf2dc"
-	rainIcon            =  "\uf73d" // "\uf740"
+	rainIcon            = "\uf73d" // "\uf740"
 	sunIcon             = "\uf185"
 	cloudIcon           = "\uf0c2"
 	thunderIcon         = ""
@@ -26,24 +26,23 @@ var (
 )
 
 type location struct {
-        Name    string `json:"city"`
-        Coord   string `json:"loc"`
-        rewrite string
+	Name    string `json:"city"`
+	Coord   string `json:"loc"`
+	rewrite string
 }
 
 type weather struct {
-        Weather []struct {
-                Main string `json:"main"`
-                Desc string `json:"description"`
-        } `json:"weather"`
-        Main struct {
-                Temp float64 `json:"temp"`
-        } `json:"main"`
-        Wind struct {
-                Speed int `json:"speed"`
-        } `json:"wind"`
+	Weather []struct {
+		Main string `json:"main"`
+		Desc string `json:"description"`
+	} `json:"weather"`
+	Main struct {
+		Temp float64 `json:"temp"`
+	} `json:"main"`
+	Wind struct {
+		Speed int `json:"speed"`
+	} `json:"wind"`
 }
-
 
 func getWeatherModule(mo *ModuleOutput, cfg ModuleConfig) {
 	log.Debug(`"Weather" module hook started`)
@@ -55,7 +54,7 @@ func getWeatherModule(mo *ModuleOutput, cfg ModuleConfig) {
 	} else {
 		//module just started
 		log.Debug("Could not find location in cache, config lookup...")
-		_, ok := cfg.Extra["location"] 
+		_, ok := cfg.Extra["location"]
 		if ok {
 			city, _ := cfg.Extra["location"].(string)
 			if city == "auto" {
@@ -77,7 +76,7 @@ func getWeatherModule(mo *ModuleOutput, cfg ModuleConfig) {
 	if wf == nil {
 		log.Debug("Could not fetch weather forecast for openweathermap API. Returning N/A value")
 		mo.FullText += "N/A"
-		return 
+		return
 	}
 	icon, ok := iconSet[wf.Weather[0].Main]
 	if !ok {
@@ -85,7 +84,7 @@ func getWeatherModule(mo *ModuleOutput, cfg ModuleConfig) {
 	}
 	mo.FullText = fmt.Sprintf("%s%s: %s %.0f%s (%d m/s)", mo.FullText, loc.Name, icon, wf.Main.Temp, celsiusIcon, wf.Wind.Speed)
 	log.Debugf("Returning -> %s%s: %s %.0f%s (%d m/s) \n", mo.FullText, loc.Name, icon, wf.Main.Temp, celsiusIcon, wf.Wind.Speed)
-	
+
 }
 
 func getLocation() location {
@@ -134,5 +133,5 @@ func getWeather(l location) *weather {
 }
 
 func init() {
-        RegisteredFuncs["weather"] = getWeatherModule
+	RegisteredFuncs["weather"] = getWeatherModule
 }

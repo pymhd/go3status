@@ -1,12 +1,12 @@
 package modules
 
 import (
-        "github.com/pymhd/go-logging"
+	"github.com/pymhd/go-logging"
 )
 
-var log  *logger.Logger
+var log *logger.Logger
 var RegisteredFuncs = make(map[string]func(*ModuleOutput, ModuleConfig))
 
 func RegisterLogger(l *logger.Logger) {
-    log = l
+	log = l
 }

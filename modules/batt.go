@@ -1,39 +1,37 @@
 package modules
 
 import (
+	"bufio"
 	"fmt"
 	"os"
-        "time"
-	"bufio"
 	"regexp"
 	"strconv"
+	"time"
 )
 
 func batt(mo *ModuleOutput, cfg ModuleConfig) {
-        output := ModuleOutput{}
-        output.Markup = "pango"
-        output.Refresh = true
-        output.FullText = cfg.Prefix
+	output := ModuleOutput{}
+	output.Markup = "pango"
+	output.Refresh = true
+	output.FullText = cfg.Prefix
 
 	percentage, capacity, status := getBatPercent()
-        duration, _ := time.ParseDuration(capacity)
-        hours, minutes := fmtDuration(duration)
+	duration, _ := time.ParseDuration(capacity)
+	hours, minutes := fmtDuration(duration)
 	mo.Color = getColor(percentage, cfg)
 	mo.FullText += fmt.Sprintf("%s %.0f%%/%dh%dm", status, percentage, hours, minutes)
 }
 
-
 func fmtDuration(d time.Duration) (time.Duration, time.Duration) {
-    d = d.Round(time.Minute)
-    h := d / time.Hour
-    d -= h * time.Hour
-    m := d / time.Minute
-    return h, m /*fmt.Sprintf("%02dh %02dm", h, m) */
+	d = d.Round(time.Minute)
+	h := d / time.Hour
+	d -= h * time.Hour
+	m := d / time.Minute
+	return h, m /*fmt.Sprintf("%02dh %02dm", h, m) */
 }
 
-
-func getBatPercent () (float64, string, string) {
-        var b_status, capacity string
+func getBatPercent() (float64, string, string) {
+	var b_status, capacity string
 	var e_full, e_now, p_now, percent float64
 
 	re := regexp.MustCompile(`(^.*)=(.*$)`)

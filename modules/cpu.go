@@ -51,7 +51,6 @@ func cpu(mo *ModuleOutput, cfg ModuleConfig) {
 	mo.FullText = fmt.Sprintf("%s%.2f%%", mo.FullText, cpu)
 }
 
-
 func init() {
 	RegisteredFuncs["cpu"] = cpu
 }

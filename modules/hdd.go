@@ -21,7 +21,7 @@ type filesystem struct {
 
 func hdd(mo *ModuleOutput, cfg ModuleConfig) {
 	fs := filesystem{}
-	mp, ok := cfg.Extra["mountPoint"]	
+	mp, ok := cfg.Extra["mountPoint"]
 	if !ok {
 		mo.FullText += "N/A"
 		return
@@ -60,7 +60,6 @@ func getMpStats(path string) (float64, float64) {
 	total := float64(stats.Blocks) * float64(stats.Bsize)
 	return (total - avail) / 1024 / 1024 / 1024, total / 1024 / 1024 / 1024
 }
-
 
 func init() {
 	RegisteredFuncs["hdd"] = hdd

@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"go3status/modules"
-	
+
 	"github.com/pymhd/go-logging"
 	"github.com/pymhd/go-logging/handlers"
 )
@@ -19,16 +19,15 @@ func main() {
 	flag.Parse()
 	//Parse config file
 	cfg = ParseConfig(*cf)
-	
+
 	if len(cfg.Global.LogFile) > 0 {
 		severity := 3 - cfg.Global.LogLevel
 		log = logger.New("main", handlers.NewFileHandler(cfg.Global.LogFile), severity, logger.OLEVEL|logger.OFILE|logger.OTIME)
 	} else {
 		log = logger.New("null", handlers.NullHandler{}, logger.ERROR, 0)
 	}
-        log.Info("go3status is starting")
-        modules.RegisterLogger(log)
-        
+	log.Info("go3status is starting")
+	modules.RegisterLogger(log)
 
 	s := NewStatusLine()
 	//Start will create chans and select cases to handle, and run modules

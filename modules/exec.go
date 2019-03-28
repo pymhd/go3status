@@ -4,7 +4,6 @@ import (
 	"time"
 )
 
-
 func execCmd(mo *ModuleOutput, cfg ModuleConfig) {
 	_, ok := cfg.Extra["cmd"]
 	if !ok {
@@ -17,17 +16,17 @@ func execCmd(mo *ModuleOutput, cfg ModuleConfig) {
 		mo.Color, _ = cfg.Extra["color"].(string)
 	}
 	timeout := time.Duration(500 * time.Millisecond)
-	tmt, ok := cfg.Extra["timeout"] 
+	tmt, ok := cfg.Extra["timeout"]
 	if ok {
 		ts, ok := tmt.(string)
-		if ok { 
+		if ok {
 			t, err := time.ParseDuration(ts)
 			if err == nil {
 				timeout = t
 			}
 		}
 	}
-	mo.FullText += execute(cmd, timeout) 
+	mo.FullText += execute(cmd, timeout)
 }
 
 func init() {

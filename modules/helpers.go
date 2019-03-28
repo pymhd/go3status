@@ -1,12 +1,12 @@
 package modules
 
 import (
-	"fmt"
-	"time"
 	"bytes"
+	"fmt"
+	"os/exec"
 	"strconv"
 	"strings"
-	"os/exec"
+	"time"
 )
 
 var (
@@ -56,11 +56,11 @@ func execute(oneliner string, timeout time.Duration) string {
 }
 
 func getColor(n float64, cfg ModuleConfig) string {
-        var color string
-        for lvl, val := range cfg.Levels {
-                if inRange(n, val) {
-                        color = cfg.Colors[lvl]
-                }
-        }        
-        return color
+	var color string
+	for lvl, val := range cfg.Levels {
+		if inRange(n, val) {
+			color = cfg.Colors[lvl]
+		}
+	}
+	return color
 }
