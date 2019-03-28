@@ -59,12 +59,13 @@ func getWeatherModule(mo *ModuleOutput, cfg ModuleConfig) {
 		if ok {
 			city, _ := cfg.Extra["location"].(string)
 			if city == "auto" {
+				log.Debug("Found auto detect location request in config")
 				loc = getLocation()
 			} else {
 				loc.rewrite = city
 				loc.Name = city
+				log.Debugf("Found location in config: %s\n", loc.Name)
 			}
-			log.Debugf("Found location in config: %s\n", loc.Name)
 		} else {
 			log.Debug("Could not find location in config, will auto detect it by ip addr using ipinfo.io svc")
 			loc = getLocation()
@@ -78,7 +79,6 @@ func getWeatherModule(mo *ModuleOutput, cfg ModuleConfig) {
 		mo.FullText += "N/A"
 		return 
 	}
-	log.Debug("Fetched weather from openweathermap API")
 	icon, ok := iconSet[wf.Weather[0].Main]
 	if !ok {
 		icon = smogIcon
@@ -89,36 +89,46 @@ func getWeatherModule(mo *ModuleOutput, cfg ModuleConfig) {
 }
 
 func getLocation() location {
+	log.Debug("Location auto detect started")
 	loc := new(location)
 	url := "http://ipinfo.io/json"
 	res, err := http.Get(url)
 	if err != nil {
+		log.Errorf("Could not reach ipinfo.io svc: (%s)\n", err)
 		return *loc
 	}
 	defer res.Body.Close()
 	if err := json.NewDecoder(res.Body).Decode(loc); err != nil {
-		panic(err)
+		log.Errorf("Could not parse json obj in response from ipinfo.io (%s)\n", err)
+		return *loc
 	}
+	log.Debug("Successfully found location by ip addr")
 	return *loc
 }
 
 func getWeather(l location) *weather {
+	log.Debug("Weather forecast fetching started")
 	w := new(weather)
 	coord := strings.Split(l.Coord, ",")
 	var url string
 	if len(l.rewrite) > 0 {
+		log.Debugf("Going to get weather for manually specified region: %s\n", l.rewrite)
 		url = fmt.Sprintf("http://api.openweathermap.org/data/2.5/weather?appid=%s&q=%s&units=metric", OpenWeatherMapToken, l.rewrite)
 	} else {
+		log.Debug("Going to get weather for auto detected region by its coords")
 		url = fmt.Sprintf("http://api.openweathermap.org/data/2.5/weather?appid=%s&lat=%s&lon=%s&units=metric", OpenWeatherMapToken, coord[0], coord[1])
 	}
 	res, err := http.Get(url)
 	if err != nil {
+		log.Errorf("Could not fetch weather forcast: (%s)\n", err)
 		return nil
 	}
 	defer res.Body.Close()
 	if err := json.NewDecoder(res.Body).Decode(w); err != nil {
+		log.Errorf("Could not parse json obj in response from openweathermap API (%s)\n", err)
 		return nil
 	}
+	log.Debug("Successfully fetched weather forecast")
 	return w
 
 }
