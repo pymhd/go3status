@@ -46,12 +46,15 @@ type weather struct {
 
 
 func getWeatherModule(mo *ModuleOutput, cfg ModuleConfig) {
+	log.Debug(`"Weather" module hook started`)
 	var loc location
 	v := cache.Get(weatherCacheKey)
 	if v != nil {
 		loc, _ = v.(location)
+		log.Debugf("Found location in cache: %s\n", loc.Name)
 	} else {
 		//module just started
+		log.Debug("Could not find location in cache, config lookup...")
 		_, ok := cfg.Extra["location"] 
 		if ok {
 			city, _ := cfg.Extra["location"].(string)
@@ -61,21 +64,27 @@ func getWeatherModule(mo *ModuleOutput, cfg ModuleConfig) {
 				loc.rewrite = city
 				loc.Name = city
 			}
+			log.Debugf("Found location in config: %s\n", loc.Name)
 		} else {
+			log.Debug("Could not find location in config, will auto detect it by ip addr using ipinfo.io svc")
 			loc = getLocation()
 		}
 		cache.Add(weatherCacheKey, loc, "24h")
+		log.Debug("Location pushed in cache")
 	}
 	wf := getWeather(loc)
 	if wf == nil {
+		log.Debug("Could not fetch weather forecast for openweathermap API. Returning N/A value")
 		mo.FullText += "N/A"
 		return 
 	}
+	log.Debug("Fetched weather from openweathermap API")
 	icon, ok := iconSet[wf.Weather[0].Main]
 	if !ok {
 		icon = smogIcon
 	}
 	mo.FullText = fmt.Sprintf("%s%s: %s %.0f%s (%d m/s)", mo.FullText, loc.Name, icon, wf.Main.Temp, celsiusIcon, wf.Wind.Speed)
+	log.Debugf("Returning -> %s%s: %s %.0f%s (%d m/s) \n", mo.FullText, loc.Name, icon, wf.Main.Temp, celsiusIcon, wf.Wind.Speed)
 	
 }
 
