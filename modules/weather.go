@@ -40,7 +40,7 @@ type weather struct {
 		Temp float64 `json:"temp"`
 	} `json:"main"`
 	Wind struct {
-		Speed int `json:"speed"`
+		Speed float64 `json:"speed"`
 	} `json:"wind"`
 }
 
@@ -82,8 +82,8 @@ func getWeatherModule(mo *ModuleOutput, cfg ModuleConfig) {
 	if !ok {
 		icon = smogIcon
 	}
-	mo.FullText = fmt.Sprintf("%s%s: %s %.0f%s (%d m/s)", mo.FullText, loc.Name, icon, wf.Main.Temp, celsiusIcon, wf.Wind.Speed)
-	log.Debugf("Returning -> %s%s: %s %.0f%s (%d m/s) \n", mo.FullText, loc.Name, icon, wf.Main.Temp, celsiusIcon, wf.Wind.Speed)
+	mo.FullText = fmt.Sprintf("%s%s: %s %.0f%s (%.1f m/s)", mo.FullText, loc.Name, icon, wf.Main.Temp, celsiusIcon, wf.Wind.Speed)
+	log.Debugf("Returning -> %s%s: %s %.0f%s (%.1f m/s) \n", mo.FullText, loc.Name, icon, wf.Main.Temp, celsiusIcon, wf.Wind.Speed)
 
 }
 
