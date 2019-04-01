@@ -10,7 +10,7 @@ import (
 
 var (
 	cfg *Config
-	log *logger.Logger
+	log logger.Logger
 )
 
 func main() {
