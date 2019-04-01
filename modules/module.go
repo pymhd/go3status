@@ -48,15 +48,14 @@ func (m *Module) HandleClickEvent(ce *ClickEvent) {
 	switch ce.Button {
 	// middle, reserved, shrink panel and force refresh
 	case 2:
-		switch ce.Mod[0] {
-		case "Shift":
-			m.refresh()
-		case "Control":
-			m.refresh()
-		default:
-			m.mute = ^m.mute
-			m.refresh()
+		if len(ce.Mod) > 0 {
+			if ce.Mod[0] == "Shift" || ce.Mod[0] == "Control" {
+				m.refresh()
+				break
+			}
 		}
+		m.mute = ^m.mute
+		m.refresh()
 	// any other
 	default:
 		buttonNumber := ce.Button
