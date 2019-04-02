@@ -29,7 +29,8 @@ type ModuleOutput struct {
 	Background string `json:"background,omitempty"`
 	//pango
 	Markup  string `json:"markup"`
-	Refresh bool
+	// do i need to refresh
+	refresh bool
 }
 
 type ClickEvent struct {

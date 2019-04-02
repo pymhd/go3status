@@ -12,7 +12,7 @@ import (
 func batt(mo *ModuleOutput, cfg ModuleConfig) {
 	output := ModuleOutput{}
 	output.Markup = "pango"
-	output.Refresh = true
+	//output.Refresh = true
 	output.FullText = cfg.Prefix
 
 	percentage, capacity, status := getBatPercent()

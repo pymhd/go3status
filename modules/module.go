@@ -1,6 +1,7 @@
 package modules
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 )
@@ -30,8 +31,15 @@ func (m *Module) Run(f func(*ModuleOutput, ModuleConfig)) {
 			} else {
 				f(mo, m.Cfg)
 			}
-			m.postLoadOutput(mo)
-			m.sendOutput(mo)
+			cacheKey := fmt.Sprintf("result:%d", m.Cfg.Id)
+			previousValue, _ := cache.Get(cacheKey).(string)
+			currentValue := mo.FullText
+			if currentValue != previousValue {
+				m.postLoadOutput(mo)
+	                        m.sendOutput(mo)
+			}
+			cache.Add(cacheKey, currentValue, "1h")
+			m.flushOutput(mo)
 		case <-m.Refresh:
 			if m.mute == -1 {
 				m.muteOutput(mo)
@@ -73,7 +81,6 @@ func (m *Module) HandleClickEvent(ce *ClickEvent) {
 func (m *Module) preloadOutput(mo *ModuleOutput) {
 	mo.Name = m.Name
 	mo.Instance = strconv.Itoa(m.Cfg.Id)
-	mo.Refresh = true
 	mo.Markup = "pango"
 	mo.FullText = m.Cfg.Prefix
 }
