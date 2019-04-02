@@ -49,8 +49,8 @@ func cpu(mo *ModuleOutput, cfg ModuleConfig) {
 	//Generate output
 	mo.Color = getColor(cpu, cfg)
 	mo.FullText = fmt.Sprintf("%s%.2f%%", mo.FullText, cpu)
+	mo.refresh = true
 }
-
 
 func init() {
 	RegisteredFuncs["cpu"] = cpu

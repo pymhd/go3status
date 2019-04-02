@@ -81,13 +81,13 @@ func NewStatusLine() *StatusLine {
 			rfsh := make(chan bool)
 			//used later as Instance attr in module output to distinct same modules
 			mcfg.Id = n
-			
+
 			m := new(modules.Module)
 			m.Name = name
 			m.Update = upd
 			m.Refresh = rfsh
 			m.Cfg = mcfg
-			
+
 			sl.Modules[n] = m
 			log.Infof("Configured module %q with update interval: %s\n", name, mcfg.Interval)
 		}

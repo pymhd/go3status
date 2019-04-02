@@ -1,11 +1,11 @@
 package main
 
 import (
-        "os"
 	"bufio"
-	"strconv"
 	"encoding/json"
 	"go3status/modules"
+	"os"
+	"strconv"
 )
 
 func RunClickEventsHandler(sl *StatusLine) {
