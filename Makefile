@@ -1,4 +1,4 @@
-GOCMD=go
+GOCMD=$(shell which go)
 GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
@@ -9,19 +9,25 @@ BINARY_UNIX=$(BINARY_NAME)_unix
 all: test build
 
 build: 
-	$(GOBUILD) -o $(BINARY_NAME) -v
+	$(info building "$(BINARY_NAME)" binary)
+	@$(GOBUILD) -o $(BINARY_NAME) -v
 
 test: 
-	$(GOTEST) -v ./...
+	$(info Cheking dependencies)
+	@$(GOTEST) -v ./... > /dev/null
 
 clean: 
-	$(GOCLEAN)
-	rm -f $(BINARY_NAME)
-	rm -f $(BINARY_UNIX)
+	$(info  go clean and binary file deleting)
+	@$(GOCLEAN)
+	@rm -f $(BINARY_NAME)
+	@rm -f $(BINARY_UNIX)
 
 install: 
-	cp $(BINARY_NAME) /usr/local/bin
+	$(info copy "$(BINARY_NAME)" file to /usr/local/bin)
+	@cp $(BINARY_NAME) /usr/local/bin
+
 
 deps:
-	$(GOGET) github.com/pymhd/go-logging
-	$(GOGET) github.com/pymhd/go-simple-cache
+	$(info go get: github.com/pymhd/go-logging github.com/pymhd/go-simple-cache)
+	@$(GOGET) github.com/pymhd/go-logging
+	@$(GOGET) github.com/pymhd/go-simple-cache
