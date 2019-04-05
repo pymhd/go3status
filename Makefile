@@ -1,11 +1,27 @@
-all: 
-	go build -o go3status ./
+GOCMD=go
+GOBUILD=$(GOCMD) build
+GOCLEAN=$(GOCMD) clean
+GOTEST=$(GOCMD) test
+GOGET=$(GOCMD) get
+BINARY_NAME=$(shell basename `pwd`)
+BINARY_UNIX=$(BINARY_NAME)_unix
 
-install: uninstall
-	cp go3status /usr/local/bin/
+all: test build
 
-uninstall:
-	rm -f /usr/local/bin/go3status
+build: 
+	$(GOBUILD) -o $(BINARY_NAME) -v
 
-clean:
-	rm -vrf go3status
+test: 
+	$(GOTEST) -v ./...
+
+clean: 
+	$(GOCLEAN)
+	rm -f $(BINARY_NAME)
+	rm -f $(BINARY_UNIX)
+
+install: 
+	cp $(BINARY_NAME) /usr/local/bin
+
+deps:
+	$(GOGET) github.com/pymhd/go-logging
+	$(GOGET) github.com/pymhd/go-simple-cache
