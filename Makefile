@@ -28,6 +28,9 @@ install:
 
 
 deps:
-	$(info go get: github.com/pymhd/go-logging github.com/pymhd/go-simple-cache)
+	$(info go get: github.com/pymhd/go-logging, github.com/pymhd/go-simple-cache, github.com/mdirkse/i3ipc, github.com/docker/docker/client, github.com/docker/docker/api/types)
 	@$(GOGET) github.com/pymhd/go-logging
 	@$(GOGET) github.com/pymhd/go-simple-cache
+	@$(GOGET) github.com/mdirkse/i3ipc
+	@$(GOGET) github.com/docker/docker/client
+	@$(GOGET) github.com/docker/docker/api/types
