@@ -14,12 +14,19 @@ func batt(mo *ModuleOutput, cfg ModuleConfig) {
 	output.Markup = "pango"
 	//output.Refresh = true
 	output.FullText = cfg.Prefix
-
+	shortformat := false
+	if cfg.Extra["format"] != nil && cfg.Extra["format"] == "short" {
+		shortformat = true
+	}
 	percentage, capacity, status := getBatPercent()
 	duration, _ := time.ParseDuration(capacity)
 	hours, minutes := fmtDuration(duration)
 	mo.Color = getColor(percentage, cfg)
-	mo.FullText += fmt.Sprintf("%s %.0f%%/%dh%dm", status, percentage, hours, minutes)
+	if shortformat {
+		mo.FullText = fmt.Sprintf("%s", status)
+	} else {
+		mo.FullText += fmt.Sprintf("%s %.0f%%/%dh%dm", status, percentage, hours, minutes)
+	}
 }
 
 func fmtDuration(d time.Duration) (time.Duration, time.Duration) {

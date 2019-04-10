@@ -29,7 +29,7 @@ func RunClickEventsHandler(sl *StatusLine) {
 		if len(ce.Name) > 0 {
 			id, _ := strconv.Atoi(ce.Instance)
 			go sl.Modules[id].HandleClickEvent(ce)
-			log.Infof("Ran %q module click event handler routine\n", sl.Modules[id].Name)
+			log.Infof("Ran %q module click event handler routine, Button %q\n", sl.Modules[id].Name, ce.Button)
 		}
 	}
 }
