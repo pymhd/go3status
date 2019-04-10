@@ -28,9 +28,9 @@ func (m *Module) Run(f func(*ModuleOutput, ModuleConfig)) {
 		select {
 		case <-ticker.C:
 			if m.short == -1 {
-				m.Cfg.Extra["format"] = "short"
+				m.Cfg.ShortFormat = true
 			} else {
-				m.Cfg.Extra["format"] = "long"
+				m.Cfg.ShortFormat = false
 			}
 			if m.mute == -1 {
 				m.muteOutput(mo)
@@ -48,9 +48,9 @@ func (m *Module) Run(f func(*ModuleOutput, ModuleConfig)) {
 			m.flushOutput(mo)
 		case <-m.Refresh:
 			if m.short == -1 {
-				m.Cfg.Extra["format"] = "short"
+				m.Cfg.ShortFormat = true
 			} else {
-				m.Cfg.Extra["format"] = "long"
+				m.Cfg.ShortFormat = false
 			}
 
 			if m.mute == -1 {
