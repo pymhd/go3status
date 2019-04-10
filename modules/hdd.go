@@ -50,7 +50,11 @@ func hdd(mo *ModuleOutput, cfg ModuleConfig) {
 	t.Execute(&out, fs)
 
 	mo.Color = getColor(fs.Percentage, cfg)
-	mo.FullText += out.String()
+	if cfg.ShortFormat {
+		mo.FullText = cfg.Prefix
+	} else {
+		mo.FullText += out.String() + " Gb"
+	}
 }
 
 func getMpStats(path string) (float64, float64) {

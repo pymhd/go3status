@@ -28,7 +28,11 @@ func Docker(mo *ModuleOutput, cfg ModuleConfig) {
 		mo.FullText += "Daemon OFF"
 		return
 	}
-	mo.FullText = fmt.Sprintf("%s%d", mo.FullText, count)	
+	if cfg.ShortFormat {
+		mo.FullText = cfg.Prefix
+	} else {
+		mo.FullText = fmt.Sprintf("%s%d", mo.FullText, count)
+	}
 }
 
 func getDockerCount(v string) (int, error) {

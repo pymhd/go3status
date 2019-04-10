@@ -36,7 +36,11 @@ func memory(mo *ModuleOutput, cfg ModuleConfig) {
 	percentage := 100 * (usedF / totalF)
 
 	mo.Color = getColor(percentage, cfg)
-	mo.FullText = fmt.Sprintf("%s%.1f/%.1f (%.0f%%)", mo.FullText, usedF/1048576, totalF/1048576, percentage)
+	if cfg.ShortFormat {
+		mo.FullText = fmt.Sprintf("%s", mo.FullText)
+	} else {
+		mo.FullText = fmt.Sprintf("%s%.1f/%.1f (%.0f%%)", mo.FullText, usedF/1048576, totalF/1048576, percentage)
+	}
 }
 
 func init() {

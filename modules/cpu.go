@@ -48,7 +48,11 @@ func cpu(mo *ModuleOutput, cfg ModuleConfig) {
 	cache.Add(cpuTimeKey, newCpuTime, "1h")
 	//Generate output
 	mo.Color = getColor(cpu, cfg)
-	mo.FullText = fmt.Sprintf("%s%.2f%%", mo.FullText, cpu)
+	if cfg.ShortFormat {
+		mo.FullText = fmt.Sprintf("%s", mo.FullText)
+	} else {
+		mo.FullText = fmt.Sprintf("%s%.2f%%", mo.FullText, cpu)
+	}
 	mo.refresh = true
 }
 
