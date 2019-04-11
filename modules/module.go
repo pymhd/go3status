@@ -74,12 +74,12 @@ func (m *Module) HandleClickEvent(ce *ClickEvent) {
 				break
 			}
 			if ce.Mod[0] == "Control" {
-				m.short = ^m.short
+				m.mute = ^m.mute
 				m.refresh()
 				break
 			}
 		}
-		m.mute = ^m.mute
+		m.short = ^m.short
 		m.refresh()
 	// any other
 	default:
