@@ -38,7 +38,8 @@ func getDockerCount(version string) (int, error){
         }}
         
         client := &http.Client{Transport: tr}
-        resp, err := client.Get("http://v1.39/containers/json")
+        url := fmt.Sprintf("http://%s/containers/json", version)
+        resp, err := client.Get(url)
         if err != nil {
                 return 0, err
         }
