@@ -8,6 +8,7 @@ import (
         "encoding/json"
 )
 
+
 func Docker(mo *ModuleOutput, cfg ModuleConfig) {
         v, ok := cfg.Extra["clientAPIVersion"]
         if !ok {
@@ -33,16 +34,24 @@ func Docker(mo *ModuleOutput, cfg ModuleConfig) {
 
 
 func getDockerCount(version string) (int, error){
-        tr := &http.Transport{ Dial: func(string, string) (net.Conn, error) {
-                return net.Dial("unix", "/var/run/docker.sock")
-        }}
-        
-        client := &http.Client{Transport: tr}
+        var tr http.Transport
+        v := cache.Get("docker:transport")
+        if v == nil {
+                tr = http.Transport{ Dial: func(string, string) (net.Conn, error) {
+                        return net.Dial("unix", "/var/run/docker.sock")
+                }}
+                cache.Add("docker:transport", tr, "1h")
+        } else {
+                tr, _ = v.(http.Transport)
+        }
+        defer tr.CloseIdleConnections()
+        client := &http.Client{Transport: &tr}
         url := fmt.Sprintf("http://%s/containers/json", version)
         resp, err := client.Get(url)
         if err != nil {
                 return 0, err
         }
+        defer resp.Body.Close()
         body, _ := ioutil.ReadAll(resp.Body)
         var d []interface{}
         err = json.Unmarshal(body, &d)
