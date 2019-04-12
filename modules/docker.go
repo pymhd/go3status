@@ -1,12 +1,13 @@
 package modules
 
 import (
-	"fmt"
-
-	"context"
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/client"
+        "fmt"
+        "net"
+        "net/http"
+        "io/ioutil"
+        "encoding/json"
 )
+
 
 func Docker(mo *ModuleOutput, cfg ModuleConfig) {
 	v, ok := cfg.Extra["clientAPIVersion"]
@@ -35,19 +36,35 @@ func Docker(mo *ModuleOutput, cfg ModuleConfig) {
 	}
 }
 
-func getDockerCount(v string) (int, error) {
-	cli, err := client.NewClientWithOpts(client.WithVersion(v))
-	if err != nil {
-		return 0, err
-	}
-	defer cli.Close()
-	containers, err := cli.ContainerList(context.Background(), types.ContainerListOptions{})
-	if err != nil {
-		return 0, err
-	}
-	return len(containers), nil
-}
+
+func getDockerCount(version string) (int, error){
+        var tr http.Transport
+        v := cache.Get("docker:transport")
+        if v == nil {
+                tr = http.Transport{ Dial: func(string, string) (net.Conn, error) {
+                        return net.Dial("unix", "/var/run/docker.sock")
+                }}
+                cache.Add("docker:transport", tr, "1h")
+        } else {
+                tr, _ = v.(http.Transport)
+        }
+        defer tr.CloseIdleConnections()
+        client := &http.Client{Transport: &tr}
+        url := fmt.Sprintf("http://%s/containers/json", version)
+        resp, err := client.Get(url)
+        if err != nil {
+                return 0, err
+        }
+        defer resp.Body.Close()
+        body, _ := ioutil.ReadAll(resp.Body)
+        var d []interface{}
+        err = json.Unmarshal(body, &d)
+        if err != nil {
+                return 0, err
+        } 
+        return len(d), nil
+}    
 
 func init() {
-	RegisteredFuncs["docker"] = Docker
+        RegisteredFuncs["docker"] = Docker
 }
