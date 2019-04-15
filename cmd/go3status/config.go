@@ -1,7 +1,7 @@
 package main
 
 import (
-	"go3status/modules"
+	"go3status/internal/modules"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 )

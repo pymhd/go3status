@@ -3,7 +3,7 @@ package main
 import (
 	"bufio"
 	"encoding/json"
-	"go3status/modules"
+	"go3status/internal/modules"
 	"os"
 	"strconv"
 )
