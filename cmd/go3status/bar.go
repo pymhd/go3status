@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"go3status/modules"
+	"go3status/internal/modules"
 	"os"
 	"reflect"
 	"sync"

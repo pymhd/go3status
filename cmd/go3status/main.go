@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"go3status/modules"
+	"go3status/internal/modules"
 
 	"github.com/pymhd/go-logging"
 	"github.com/pymhd/go-logging/handlers"

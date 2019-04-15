@@ -12,7 +12,7 @@ all: test build
 ##build: build binary with go build 
 build: 
 	$(info building "$(BINARY_NAME)" binary)
-	@$(GOBUILD) -o $(BINARY_NAME) -v
+	@$(GOBUILD) -o $(BINARY_NAME) -v cmd/go3status/*.go
 
 ##test: test  go deps
 test: 
