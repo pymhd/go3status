@@ -23,6 +23,9 @@ func (m *Module) Run(f func(*ModuleOutput, ModuleConfig)) {
 	//run func on startup
 	f(mo, m.Cfg)
 	m.sendOutput(mo)
+	if  m.Cfg.ShortFormat {
+		m.short = -1
+	}
 	ticker := time.NewTicker(m.Cfg.Interval)
 	for {
 		select {

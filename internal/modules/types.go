@@ -13,7 +13,7 @@ type ModuleConfig struct {
 	Colors      map[string]string      `yaml:"colors"`
 	Levels      map[string]string      `yaml:"levels"`
 	ClickEvents map[string]string      `yaml:"clickEvents"`
-	ShortFormat bool
+	ShortFormat bool		   `yaml:"short"`
 	Extra       map[string]interface{} `yaml:"extra"`
 }
 
