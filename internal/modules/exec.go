@@ -26,7 +26,11 @@ func execCmd(mo *ModuleOutput, cfg ModuleConfig) {
 			}
 		}
 	}
-	mo.FullText += execute(cmd, timeout)
+	if cfg.ShortFormat {
+		mo.FullText = cfg.Prefix
+	} else {
+		mo.FullText += execute(cmd, timeout)
+	}
 }
 
 func init() {

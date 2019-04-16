@@ -19,7 +19,11 @@ func batt(mo *ModuleOutput, cfg ModuleConfig) {
 	duration, _ := time.ParseDuration(capacity)
 	hours, minutes := fmtDuration(duration)
 	mo.Color = getColor(percentage, cfg)
-	mo.FullText += fmt.Sprintf("%s %.0f%%/%dh%dm", status, percentage, hours, minutes)
+	if cfg.ShortFormat {
+		mo.FullText = fmt.Sprintf("%s", status)
+	} else {
+		mo.FullText += fmt.Sprintf("%s %.0f%%/%dh%dm", status, percentage, hours, minutes)
+	}
 }
 
 func fmtDuration(d time.Duration) (time.Duration, time.Duration) {

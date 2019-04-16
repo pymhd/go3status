@@ -11,6 +11,7 @@ type Module struct {
 	Update  chan ModuleOutput
 	Cfg     ModuleConfig
 	mute    int
+	short	int
 	Refresh chan bool
 }
 
@@ -22,10 +23,18 @@ func (m *Module) Run(f func(*ModuleOutput, ModuleConfig)) {
 	//run func on startup
 	f(mo, m.Cfg)
 	m.sendOutput(mo)
+	if  m.Cfg.ShortFormat {
+		m.short = -1
+	}
 	ticker := time.NewTicker(m.Cfg.Interval)
 	for {
 		select {
 		case <-ticker.C:
+			if m.short == -1 {
+				m.Cfg.ShortFormat = true
+			} else {
+				m.Cfg.ShortFormat = false
+			}
 			if m.mute == -1 {
 				m.muteOutput(mo)
 			} else {
@@ -41,6 +50,12 @@ func (m *Module) Run(f func(*ModuleOutput, ModuleConfig)) {
 			cache.Add(cacheKey, currentValue, "1h")
 			m.flushOutput(mo)
 		case <-m.Refresh:
+			if m.short == -1 {
+				m.Cfg.ShortFormat = true
+			} else {
+				m.Cfg.ShortFormat = false
+			}
+
 			if m.mute == -1 {
 				m.muteOutput(mo)
 			} else {
@@ -57,12 +72,17 @@ func (m *Module) HandleClickEvent(ce *ClickEvent) {
 	// middle, reserved, shrink panel and force refresh
 	case 2:
 		if len(ce.Mod) > 0 {
-			if ce.Mod[0] == "Shift" || ce.Mod[0] == "Control" {
+			if ce.Mod[0] == "Shift" {
+				m.refresh()
+				break
+			}
+			if ce.Mod[0] == "Control" {
+				m.mute = ^m.mute
 				m.refresh()
 				break
 			}
 		}
-		m.mute = ^m.mute
+		m.short = ^m.short
 		m.refresh()
 	// any other
 	default:
@@ -92,7 +112,11 @@ func (m *Module) postLoadOutput(mo *ModuleOutput) {
 func (m *Module) muteOutput(mo *ModuleOutput) {
 	mo.FullText += "..."
 }
-
+/*
+func (m *Module) shortOutput(mo *ModuleOutput) {
+	mo.FullText += mo.ShortText
+}
+*/
 func (m *Module) flushOutput(mo *ModuleOutput) {
 	mo.FullText = m.Cfg.Prefix
 }
