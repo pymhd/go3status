@@ -10,8 +10,9 @@ type Module struct {
 	Name    string
 	Update  chan ModuleOutput
 	Cfg     ModuleConfig
-	mute    int
-	short	int
+	layout  int
+	//mute    int
+	//short	int
 	Refresh chan bool
 }
 
@@ -24,21 +25,20 @@ func (m *Module) Run(f func(*ModuleOutput, ModuleConfig)) {
 	f(mo, m.Cfg)
 	m.sendOutput(mo)
 	if  m.Cfg.ShortFormat {
-		m.short = -1
+		m.layout = 1
 	}
 	ticker := time.NewTicker(m.Cfg.Interval)
 	for {
 		select {
 		case <-ticker.C:
-			if m.short == -1 {
-				m.Cfg.ShortFormat = true
-			} else {
-				m.Cfg.ShortFormat = false
-			}
-			if m.mute == -1 {
-				m.muteOutput(mo)
-			} else {
+			switch (m.layout +3 ) % 3 {
+			case 0:
 				f(mo, m.Cfg)
+			case 1:
+				f(mo, m.Cfg)
+				mo.FullText = mo.ShortText
+			case 2:
+				m.muteOutput(mo)
 			}
 			cacheKey := fmt.Sprintf("result:%d", m.Cfg.Id)
 			previousValue, _ := cache.Get(cacheKey).(string)
@@ -50,17 +50,15 @@ func (m *Module) Run(f func(*ModuleOutput, ModuleConfig)) {
 			cache.Add(cacheKey, currentValue, "1h")
 			m.flushOutput(mo)
 		case <-m.Refresh:
-			if m.short == -1 {
-				m.Cfg.ShortFormat = true
-			} else {
-				m.Cfg.ShortFormat = false
-			}
-
-			if m.mute == -1 {
-				m.muteOutput(mo)
-			} else {
-				f(mo, m.Cfg)
-			}
+			switch (m.layout +3 ) % 3 {
+                        case 0:
+                                f(mo, m.Cfg)
+                        case 1:
+                                f(mo, m.Cfg)
+                                mo.FullText = mo.ShortText
+                        case 2:
+                                m.muteOutput(mo)
+                        }
 			m.postLoadOutput(mo)
 			m.sendOutput(mo)
 		}
@@ -69,20 +67,9 @@ func (m *Module) Run(f func(*ModuleOutput, ModuleConfig)) {
 
 func (m *Module) HandleClickEvent(ce *ClickEvent) {
 	switch ce.Button {
-	// middle, reserved, shrink panel and force refresh
+	// middle, reserved, change layout panel and force refresh
 	case 2:
-		if len(ce.Mod) > 0 {
-			if ce.Mod[0] == "Shift" {
-				m.refresh()
-				break
-			}
-			if ce.Mod[0] == "Control" {
-				m.mute = ^m.mute
-				m.refresh()
-				break
-			}
-		}
-		m.short = ^m.short
+		m.layout++
 		m.refresh()
 	// any other
 	default:
@@ -103,6 +90,7 @@ func (m *Module) preloadOutput(mo *ModuleOutput) {
 	mo.Instance = strconv.Itoa(m.Cfg.Id)
 	mo.Markup = "pango"
 	mo.FullText = m.Cfg.Prefix
+	mo.ShortText = m.Cfg.Prefix
 }
 
 func (m *Module) postLoadOutput(mo *ModuleOutput) {
