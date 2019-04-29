@@ -2,7 +2,7 @@ package modules
 
 import (
 	"github.com/mdirkse/i3ipc"
-	_ "unicode/utf8"
+	"unicode/utf8"
 )
 
 const (
@@ -25,13 +25,17 @@ func getFocusedTitle(mo *ModuleOutput, cfg ModuleConfig) {
 	node, _ := i3socket.GetTree()
 	focused := node.FindFocused()
 	name := focused.Window_Properties.Title
-	//length := utf8.RuneCountInString(name)
-	mo.FullText += name
-
-	//if max == 0 || length <= max {
-	//	return name[:]
-	//}
-	//return name[:max]
+	var max int
+	v, ok := cfg.Extra["maxChars"]
+	if ok {
+		max, _ = v.(int)
+	}
+	length := utf8.RuneCountInString(name)
+	if max == 0 || length <= max {
+		mo.FullText += name
+	} else {
+		mo.FullText += name[:max]
+	}
 }
 
 func init() {
