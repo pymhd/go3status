@@ -13,7 +13,7 @@ type ModuleConfig struct {
 	Colors      map[string]string      `yaml:"colors"`
 	Levels      map[string]string      `yaml:"levels"`
 	ClickEvents map[string]string      `yaml:"clickEvents"`
-	ShortFormat bool		   `yaml:"short"`
+	ShortFormat bool                   `yaml:"short"`
 	Extra       map[string]interface{} `yaml:"extra"`
 }
 
@@ -29,7 +29,7 @@ type ModuleOutput struct {
 	Urgent     bool   `json:"urgent"`
 	Background string `json:"background,omitempty"`
 	//pango
-	Markup  string `json:"markup"`
+	Markup string `json:"markup"`
 	// do i need to refresh
 	refresh bool
 }

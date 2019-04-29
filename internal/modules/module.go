@@ -7,10 +7,10 @@ import (
 )
 
 type Module struct {
-	Name    string
-	Update  chan ModuleOutput
-	Cfg     ModuleConfig
-	layout  int
+	Name   string
+	Update chan ModuleOutput
+	Cfg    ModuleConfig
+	layout int
 	//mute    int
 	//short	int
 	Refresh chan bool
@@ -24,14 +24,14 @@ func (m *Module) Run(f func(*ModuleOutput, ModuleConfig)) {
 	//run func on startup
 	f(mo, m.Cfg)
 	m.sendOutput(mo)
-	if  m.Cfg.ShortFormat {
+	if m.Cfg.ShortFormat {
 		m.layout = 1
 	}
 	ticker := time.NewTicker(m.Cfg.Interval)
 	for {
 		select {
 		case <-ticker.C:
-			switch (m.layout +3 ) % 3 {
+			switch (m.layout + 3) % 3 {
 			case 0:
 				f(mo, m.Cfg)
 			case 1:
@@ -45,20 +45,20 @@ func (m *Module) Run(f func(*ModuleOutput, ModuleConfig)) {
 			currentValue := mo.FullText
 			if currentValue != previousValue {
 				m.postLoadOutput(mo)
-	                        m.sendOutput(mo)
+				m.sendOutput(mo)
 			}
 			cache.Add(cacheKey, currentValue, "1h")
 			m.flushOutput(mo)
 		case <-m.Refresh:
-			switch (m.layout +3 ) % 3 {
-                        case 0:
-                                f(mo, m.Cfg)
-                        case 1:
-                                f(mo, m.Cfg)
-                                mo.FullText = mo.ShortText
-                        case 2:
-                                m.muteOutput(mo)
-                        }
+			switch (m.layout + 3) % 3 {
+			case 0:
+				f(mo, m.Cfg)
+			case 1:
+				f(mo, m.Cfg)
+				mo.FullText = mo.ShortText
+			case 2:
+				m.muteOutput(mo)
+			}
 			m.postLoadOutput(mo)
 			m.sendOutput(mo)
 		}
@@ -100,6 +100,7 @@ func (m *Module) postLoadOutput(mo *ModuleOutput) {
 func (m *Module) muteOutput(mo *ModuleOutput) {
 	mo.FullText += "..."
 }
+
 /*
 func (m *Module) shortOutput(mo *ModuleOutput) {
 	mo.FullText += mo.ShortText
