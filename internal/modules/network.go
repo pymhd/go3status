@@ -15,7 +15,7 @@ func network(mo *ModuleOutput, cfg ModuleConfig) {
 	var conn_level float64
 	var addr string
 
-	conn_type := "\uf5a5"
+	conn_type := "\uf3dd"
         conn_level = 0
 
 	output := ModuleOutput{}
@@ -33,7 +33,7 @@ func network(mo *ModuleOutput, cfg ModuleConfig) {
 			conn_type = "\uf1eb"
 			mo.FullText = fmt.Sprintf("%s %s(%s[%.0f%%])", conn_type, addr, essid, conn_level)
 		} else {
-			conn_type = "\uf796"
+			conn_type = "\uf6ff"
 			conn_level = 100
 			mo.FullText = fmt.Sprintf("%s %s", conn_type, addr)
 		}
