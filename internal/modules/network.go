@@ -31,9 +31,9 @@ func network(mo *ModuleOutput, cfg ModuleConfig) {
 			essid := (wireless["essid"])
 			conn_level = getPercent(wireless["level"])
 			conn_type = "\uf1eb"
-			mo.FullText = fmt.Sprintf("%s %s(%s[%.0f%%])", conn_type, addr, essid, conn_level)
+			mo.FullText = fmt.Sprintf("%s %s[%.0f%%] %s", conn_type, essid, conn_level, addr)
 		} else {
-			conn_type = "\uf6ff"
+			conn_type = "\uf0e8"
 			conn_level = 100
 			mo.FullText = fmt.Sprintf("%s %s", conn_type, addr)
 		}
