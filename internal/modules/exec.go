@@ -8,64 +8,68 @@ const (
 	spawned = ":spawned"
 )
 
+type execExtraConf struct {
+	cmd	string
+	color	string
+	timeout time.Duration
+	update  time.Duration 
+	cacheEnabled bool
+	
+}
+
 func execCmd(mo *ModuleOutput, cfg ModuleConfig) {
-	_, ok := cfg.Extra["cmd"]
-	if !ok {
-		mo.FullText += "Provide command"
-		return
-	}
-	cmd, _ := cfg.Extra["cmd"].(string)
-	_, ok = cfg.Extra["color"]
-	if ok {
-		mo.Color, _ = cfg.Extra["color"].(string)
-	}
-	timeout := time.Duration(500 * time.Millisecond)
-	tmt, ok := cfg.Extra["timeout"]
-	if ok {
-		ts, ok := tmt.(string)
-		if ok {
-			t, err := time.ParseDuration(ts)
-			if err == nil {
-				timeout = t
+	ecfg := execExtraConf{timeout: time.Duration(500 * time.Millisecond), update: time.Duration(500 * time.Millisecond)}
+	for k, v := range cfg.Extra {
+		switch k {
+		case "cmd":
+			ecfg.cmd, _ = v.(string)
+			if len(ecfg.cmd) == 0 {
+				mo.FullText += "conf err"
+				return
 			}
+		case "color":
+			ecfg.color, _ = v.(string)
+		case "timeout":
+			vs, _ := v.(string)
+			td, err := time.ParseDuration(vs)
+			if err != nil {
+                                mo.FullText += "conf err"
+                                return
+                        }
+			ecfg.timeout = td
+		case "update":
+			vs, _ := v.(string)
+                        td, err := time.ParseDuration(vs)
+                        if err != nil {
+                        	mo.FullText += "conf err"
+                        	return
+                        }
+                        ecfg.update = td
+		case "cache":
+			ecfg.cacheEnabled, _ = v.(bool)
 		}
 	}
-	var cacheEnabled bool
-	_, ok = cfg.Extra["cache"]
-	if ok {
-		cacheEnabled, _ = cfg.Extra["cache"].(bool)	
-	}
-	if cacheEnabled {
-		update := time.Duration(10 * time.Second)
-		upd, ok := cfg.Extra["update"]
-		if ok {
-			ts, ok := upd.(string)
-			if ok {
-				t, err := time.ParseDuration(ts)
-				if err == nil {
-					update = t
-				}
-			}
-		}
+	mo.Color = ecfg.color
+	if ecfg.cacheEnabled {
 		//if it is first module run
-		if workerSpawned := cache.Get(cmd + spawned); workerSpawned == nil {
-			updateTicker := time.NewTicker(update)
+		if workerSpawned := cache.Get(ecfg.cmd + spawned); workerSpawned == nil {
+			updateTicker := time.NewTicker(ecfg.update)
 			go func() {
-				cache.Add(cmd+spawned, true, "365d")
-				//exec cmd right now then periodically
-				o := execute(cmd, timeout)
-				cache.Add(cmd, o, "1h")
+				cache.Add(ecfg.cmd+spawned, true, "365d")
+				//exec ecfg.cmd right now then periodically
+				o := execute(ecfg.cmd, ecfg.timeout)
+				cache.Add(ecfg.cmd, o, "1h")
 
 				for range updateTicker.C {
-					o := execute(cmd, timeout)
-					cache.Add(cmd, o, "24h")
+					o := execute(ecfg.cmd, ecfg.timeout)
+					cache.Add(ecfg.cmd, o, "24h")
 				}
 			}()
 
 		}
 		// if worker already was spawned then we wiil wait for latest cache value
 		for {
-			output, _ := cache.Get(cmd).(string)
+			output, _ := cache.Get(ecfg.cmd).(string)
 			if len(output) > 0 {
 				mo.FullText += output
 				return
@@ -73,8 +77,8 @@ func execCmd(mo *ModuleOutput, cfg ModuleConfig) {
 			time.Sleep(100 * time.Millisecond)
 		}
 	}
-	//if cache is not used fir this module
-	mo.FullText += execute(cmd, timeout)
+	//if cache is not used for this module
+	mo.FullText += execute(ecfg.cmd, ecfg.timeout)
 	
 }
 
