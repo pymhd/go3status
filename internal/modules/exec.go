@@ -4,6 +4,10 @@ import (
 	"time"
 )
 
+const (
+	spawned = ":spawned"
+)
+
 func execCmd(mo *ModuleOutput, cfg ModuleConfig) {
 	_, ok := cfg.Extra["cmd"]
 	if !ok {
@@ -26,7 +30,44 @@ func execCmd(mo *ModuleOutput, cfg ModuleConfig) {
 			}
 		}
 	}
-	mo.FullText += execute(cmd, timeout)
+
+	update := time.Duration(10 * time.Second)
+	upd, ok := cfg.Extra["update"]
+	if ok {
+		ts, ok := upd.(string)
+		if ok {
+			t, err := time.ParseDuration(ts)
+			if err == nil {
+				update = t
+			}
+		}
+	}
+	//if it is first module run
+	if workerSpawned := cache.Get(cmd + spawned); workerSpawned == nil {
+		updateTicker := time.NewTicker(update)
+		go func() {
+			cache.Add(cmd+spawned, true, "365d")
+			//exec cmd right now then periodically
+			o := execute(cmd, timeout)
+			cache.Add(cmd, o, "1h")
+
+			for range updateTicker.C {
+				o := execute(cmd, timeout)
+				cache.Add(cmd, o, "24h")
+			}
+		}()
+
+	}
+	// if worker already was spawned then we wiil wait for latest cache value
+	for {
+		output, _ := cache.Get(cmd).(string)
+		if len(output) > 0 {
+			mo.FullText += output
+			return
+		}
+		time.Sleep(100 * time.Millisecond)
+	}
+
 }
 
 func init() {
