@@ -42,7 +42,7 @@ func (m *Module) Run(f func(*ModuleOutput, ModuleConfig)) {
 			}
 			cacheKey := fmt.Sprintf("result:%d", m.Cfg.Id)
 			previousValue, _ := cache.Get(cacheKey).(string)
-			currentValue := mo.FullText
+			currentValue := fmt.Sprintf("%s-%s", mo.FullText, mo.Color) 
 			if currentValue != previousValue {
 				m.postLoadOutput(mo)
 				m.sendOutput(mo)
