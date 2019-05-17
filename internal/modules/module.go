@@ -11,7 +11,7 @@ type Module struct {
 	Update chan ModuleOutput
 	Cfg    ModuleConfig
 	layout int
-	mute    int
+	short    int
 	Refresh chan bool
 }
 
@@ -31,7 +31,7 @@ func (m *Module) Run(f func(*ModuleOutput, ModuleConfig)) {
 		select {
 		case <-ticker.C:
 			f(mo, m.Cfg)
-			if m.mute == -1 {
+			if m.short == -1 {
 				// short form
 				mo.FullText = mo.ShortText
 			}
@@ -46,7 +46,7 @@ func (m *Module) Run(f func(*ModuleOutput, ModuleConfig)) {
 			m.flushOutput(mo)
 		case <-m.Refresh:
 			f(mo, m.Cfg)
-                        if m.mute == -1 {
+                        if m.short == -1 {
                                 // short form
                                 mo.FullText = mo.ShortText
                         }
@@ -60,7 +60,7 @@ func (m *Module) HandleClickEvent(ce *ClickEvent) {
 	switch ce.Button {
 	// middle, reserved, change layout panel and force refresh
 	case 2:
-		m.mute = ^m.mute
+		m.short = ^m.short
 		m.refresh()
 	// any other
 	default:
