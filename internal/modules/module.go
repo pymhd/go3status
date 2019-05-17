@@ -7,11 +7,11 @@ import (
 )
 
 type Module struct {
-	Name   string
-	Update chan ModuleOutput
-	Cfg    ModuleConfig
-	layout int
-	short    int
+	Name    string
+	Update  chan ModuleOutput
+	Cfg     ModuleConfig
+	layout  int
+	short   int
 	Refresh chan bool
 }
 
@@ -37,7 +37,7 @@ func (m *Module) Run(f func(*ModuleOutput, ModuleConfig)) {
 			}
 			cacheKey := fmt.Sprintf("result:%d", m.Cfg.Id)
 			previousValue, _ := cache.Get(cacheKey).(string)
-			currentValue := fmt.Sprintf("%s-%s", mo.FullText, mo.Color) 
+			currentValue := fmt.Sprintf("%s-%s", mo.FullText, mo.Color)
 			if currentValue != previousValue {
 				m.postLoadOutput(mo)
 				m.sendOutput(mo)
@@ -46,10 +46,10 @@ func (m *Module) Run(f func(*ModuleOutput, ModuleConfig)) {
 			m.flushOutput(mo)
 		case <-m.Refresh:
 			f(mo, m.Cfg)
-                        if m.short == -1 {
-                                // short form
-                                mo.FullText = mo.ShortText
-                        }
+			if m.short == -1 {
+				// short form
+				mo.FullText = mo.ShortText
+			}
 			m.postLoadOutput(mo)
 			m.sendOutput(mo)
 		}

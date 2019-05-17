@@ -1,12 +1,12 @@
 package modules
 
 import (
-	"fmt"
 	"bufio"
+	"fmt"
+	"net"
 	"os"
 	"os/exec"
 	"regexp"
-	"net"
 	"strconv"
 	"strings"
 )
@@ -16,7 +16,7 @@ func network(mo *ModuleOutput, cfg ModuleConfig) {
 	var addr string
 
 	conn_type := "\uf3dd"
-        conn_level = 0
+	conn_level = 0
 
 	output := ModuleOutput{}
 	output.Markup = "pango"
@@ -89,21 +89,21 @@ func checkWireless(ifname string) (res bool) {
 }
 
 func getWirelessInfo(ifname string) (wlan map[string]string) {
-        ifcfg := exec.Command("iwconfig", ifname)
-        out, _ := ifcfg.CombinedOutput()
+	ifcfg := exec.Command("iwconfig", ifname)
+	out, _ := ifcfg.CombinedOutput()
 	re := regexp.MustCompile(`(?s:ESSID:"(?P<essid>\S+)".*Quality=(?P<level>\S+))`)
-        groups := re.SubexpNames()
-        match := re.FindStringSubmatch(string(out))
+	groups := re.SubexpNames()
+	match := re.FindStringSubmatch(string(out))
 	wlan = make(map[string]string)
-        if len(match) == 0 {
-                fmt.Println("not match")
-                wlan["essid"] = "No ESSID"
-        }
-        for i, name := range groups {
-                if i != 0 && name != "" {
-                        wlan[name] = match[i]
-                }
-        }
+	if len(match) == 0 {
+		fmt.Println("not match")
+		wlan["essid"] = "No ESSID"
+	}
+	for i, name := range groups {
+		if i != 0 && name != "" {
+			wlan[name] = match[i]
+		}
+	}
 	return wlan
 }
 
