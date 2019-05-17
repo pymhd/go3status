@@ -2,8 +2,8 @@ package modules
 
 import (
 	"fmt"
-	"regexp"
 	"net"
+	"regexp"
 )
 
 func vpn(mo *ModuleOutput, cfg ModuleConfig) {
@@ -19,7 +19,7 @@ func vpn(mo *ModuleOutput, cfg ModuleConfig) {
 	interfaces, _ := net.Interfaces()
 	for _, i := range interfaces {
 		if re.MatchString(i.Name) {
-			ip, err :=  i.Addrs()
+			ip, err := i.Addrs()
 			if err == nil {
 				addrs = append(addrs, fmt.Sprint(ip[0]))
 			}
@@ -27,10 +27,10 @@ func vpn(mo *ModuleOutput, cfg ModuleConfig) {
 	}
 	if len(addrs) != 0 {
 		vpn_status = 100
-                mo.ShortText = "\uf57d"
+		mo.ShortText = "\uf57d"
 	}
 	mo.Color = getColor(vpn_status, cfg)
-	mo.FullText = fmt.Sprintf("%s %s", mo.ShortText, addrs) 
+	mo.FullText = fmt.Sprintf("%s %s", mo.ShortText, addrs)
 }
 
 func init() {
