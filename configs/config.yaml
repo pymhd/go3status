@@ -8,56 +8,34 @@ modules:
     postfix: "  )"
     extra:
       maxChars: 64
-- exec:
-    interval: 3h
-    prefix: "\uf155 "
-    extra:
-      cmd: 'USD=`curl -Ss  https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml |grep USD |awk -F= ''{print $NF}''| grep -Po ''(\d*\.\d{3})''` ; EUR=`curl -Ss  https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml |grep RUB|awk -F= ''{print $NF}''| grep -Po ''(\d*\.\d{1})''`; echo $EUR/$USD| bc -l|grep  -Po ''(\d*\.\d{1})'' '
-      color: "#bf3e3e"
-      timeout: 10s
-- exec:
-    interval: 3h
-    prefix: "\uf153 " 
-    extra:
-      cmd: 'curl -Ss  https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml |grep RUB|awk -F= ''{print $NF}''| grep -Po ''(\d*\.\d{1})'' ' 
-      color: "#bf3e3e"
-      timeout: 2s
 - weather:
     interval: 15m
     extra:
       location: auto
 - exec:
-    interval: 5s
-    prefix: "\uf095 "
-    clickEvents:
-      left: sudo /home/mhd/.amway-connect
-      right: sudo /home/mhd/.amway-disconnect
-    extra:
-      cmd: "/home/mhd/.amway-status"
-      color: "#bf3e3e"
-- exec:
     prefix: "\uf188 "
-    interval: 3h
+    interval: 5m
     extra:
       cmd: 'P=`checkupdates|wc -l`; Y=`yay -Qua|wc -l`; echo "$P/$Y"'
       color: "#e2c96e"
       timeout: 30s
+      cache: true
+      update: 15m
+
 - docker:
     interval: 5s
     prefix: " "
     postfix:
     extra:
-      # docker version |grep API|tail -n1 |awk '{print $3}'
       clientAPIVersion: "1.39"
       color: "#1bbbd2"
 - exec:
     interval: 5s
     prefix: "\uf109 "
     clickEvents:
-      left: urxvt -name __scratchpad -e ping 8.8.8.8
+      left: urxvt -name __scratchpad -e htop
     extra:
-      #only pipes allowed, use tee to redirect output if needed
-      cmd: 'cat /proc/loadavg | awk ''{print $1}'' '
+      cmd: "cat /proc/loadavg | awk '{print $1}'"
       color: "#e2c96e"
 - cpu:
     interval: 2s500ms
@@ -94,7 +72,7 @@ modules:
 - hdd:
     interval: 10s
     prefix: "\uf120 " 
-    postfix: " Gb"
+    postfix: 
     colors:
       good: "#66b266"
       warn: "#e2c96e"
@@ -107,53 +85,47 @@ modules:
       left: thunar
     extra:
       mountPoint: /
-      # $avail, $path, $percentage  also available as float64
-      #format: '{{printf "%.1f" $used}}/{{printf "%.1f" $total}} ({{printf "%.0f" $percentage}}%)'
       format: '{{printf "%.1f" $avail}}'
 - hdd:
     interval: 10s
     prefix: " " 
-    postfix: " Gb"
+    postfix: 
     colors:
       good: "#66b266"
       warn: "#e2c96e"
       crit: "#7f0909"
     levels:
-      good: 0-60
-      warn: 61-80
-      crit: 81-100
+      good: 0-80
+      warn: 81-95
+      crit: 96-100
     clickEvents:
       left: thunar
     extra:
-      mountPoint: /home/mhd/share
+      mountPoint: /home/kgs/storage
       # $avail, $path, $percentage  also available as float64
-      #format: '{{printf "%.1f" $used}}/{{printf "%.1f" $total}} ({{printf "%.0f" $percentage}}%)'
       format: '{{printf "%.1f" $avail}}'
-#- exec:
-#    interval: 10s
-#    prefix: "\uf027 "
-#    postfix: "%"
-#    clickEvents:
-#      left: pamixer --set-volume 0
-#      right: pamixer --set-volume 100
-#      wheelUp: pamixer -i 2
-#      wheelDown: pamixer -d 2
-#    extra:
-#      #only pipes allowed, use tee to redirect output if needed
-#      cmd: pamixer --get-volume|xargs -n1 echo
-#      color: "#e2c96e"
-#- batt:
-#    interval: 10s
-#    prefix: #"\uf5df "
-#    postfix: 
-#    colors:
-#      good: "#66b266"
-#      warn: "#e2c96e"
-#      crit: "#7f0909"
-#    levels:
-#      good: 50-100
-#      warn: 20-50
-#      crit: 0-20
+- exec:
+    interval: 10s
+    prefix: "\uf027 "
+    postfix: "%"
+    clickEvents:
+      left: pamixer --set-volume 0
+      right: pamixer --set-volume 100
+      wheelUp: pamixer -i 2
+      wheelDown: pamixer -d 2
+    extra:
+      cmd: pamixer --get-volume|xargs -n1 echo
+      color: "#e2c96e"
+- batt:
+    interval: 10s
+    colors:
+      good: "#66b266"
+      warn: "#e2c96e"
+      crit: "#7f0909"
+    levels:
+      good: 50-100
+      warn: 20-50
+      crit: 0-20
 - exec:
     interval: 1s
     prefix: "\uf11c "
