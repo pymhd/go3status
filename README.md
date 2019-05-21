@@ -182,7 +182,7 @@ Exec module accepts several extra args:
 ### Batt
 This module show battery information
 ```
--- batt:
+- batt:
     interval: 1s
     prefix: #"\uf5df "
     postfix:
