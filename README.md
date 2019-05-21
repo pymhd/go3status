@@ -5,6 +5,7 @@ go3status is a simple and lightweigt replacement for i3status utility with progr
 ### Binary instyallation (preffered)
 Download latest release on [project release page](https://github.com/pymhd/go3status/releases)
 Unpack go3status binary, and base config file
+
 #### From source
 ```sh
 git clone https://github.com/pymhd/go3status.git
@@ -19,6 +20,12 @@ Replace status_command option in i3 config file with:
 ```sh
 status_command /path/to/binary/go3status -config /etc/config.yaml
 ```
+
+## Click Events
+There is 1 common predefined click event for all modules (middle mouse button)
+It is used to switch between full and short module output. For every module
+difference between full and short form is custom. Try it.
+
 ## Modules
 ### cpu
 CPU usage percentage
@@ -170,3 +177,4 @@ Exec module accepts several extra args:
   - timeout - command timeout
   - cache - true/false - if enabled - command will be executed in background periodically and its value will be stored in cache.
   - updade - interval how often to update cache
+
