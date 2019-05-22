@@ -160,6 +160,7 @@ Title module accepts optional arg - maxChars. With it only this number of first 
 
 ### Exec
 With exec module you can exec shell command/script and expose it's ouptut. Bash interpreter is used
+```
 - exec:
     interval: 30m
     prefix: "\uf153 " 
@@ -178,3 +179,51 @@ Exec module accepts several extra args:
   - cache - true/false - if enabled - command will be executed in background periodically and its value will be stored in cache.
   - updade - interval how often to update cache
 
+### Batt
+This module show battery information
+```
+- batt:
+    interval: 1s
+    prefix: #"\uf5df "
+    postfix:
+    short: true
+    colors:
+      good: "#66b266"
+      warn: "#e2c96e"
+      crit: "#cc2222"
+    levels:
+      good: 50-100
+      warn: 20-50
+      crit: 0-20
+``` 
+### Network
+This module finds out an active network interface, determinate his type and show information about it. Colors and level used only for wireless link quality level information.
+```
+- network:
+    interval: 1s
+    short: true
+    colors:
+      good: "#66b266"
+      warn: "#e2c96e"
+      crit: "#cc2222"
+    levels:
+      good: 61-100
+      warn: 21-60
+      crit: 0-20
+```
+### VPN
+This module collects information about all tun and vpn NICs 
+colors and levels: 
+good = as minimum one VPN NIC is present and active connected
+crit = no VPNs were connected
+```
+- vpn:
+    interval: 1s
+    short: true
+    colors:
+      good: "#66b266"
+      crit: "#cc2222"
+    levels:
+      good: 51-100
+      crit: 0-51
+```
