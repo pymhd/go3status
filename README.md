@@ -227,3 +227,4 @@ crit = no VPNs were connected
       good: 51-100
       crit: 0-51
 ```
+
